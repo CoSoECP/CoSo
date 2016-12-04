@@ -10,12 +10,13 @@ CoSo is a software that analyzes the behaviour of different polls regarding poli
 
 ### To create a new branch from master
 `$ git checkout master`
-`$ it fetch`
+`$ git fetch`
 `$ git pull` (to get the last version of master)
 `$ git branch _name-of-the-branch_`
 `$ git checkout _name-of-the-branch_`
 
 ### To add your modifications
+First check that you are not working on master, and then :
 `$ cd ~/CoSo`
 `$ git add .`
 `$ git status`
