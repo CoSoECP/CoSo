@@ -69,7 +69,7 @@ Requirements files are used to hold the result from pip freeze for the purpose o
 How to add a new item to be installed for the project :
 
 `$ pip install package1`
-`$ pip freeze`
+`$ pip freeze -r requirements.txt`
 
 Requirements files are used to force pip to properly resolve dependencies.
 
