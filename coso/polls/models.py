@@ -69,7 +69,7 @@ class Party(models.Model):
         choices=ORIENTATION_CHOICES,
         default=CENTER,
     )
-    creationDate = models.DateTimeField(blank=True, null=True)
+    creation_date = models.DateTimeField(blank=True, null=True)
     parent = models.ForeignKey('Party', on_delete=models.CASCADE, blank = True, null = True)
     place = models.ForeignKey(Place, on_delete=models.CASCADE)
     pass
