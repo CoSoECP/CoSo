@@ -1,5 +1,8 @@
+import json
 import urllib2
 from bs4 import BeautifulSoup
+
+
 from django.http import HttpResponse
 from django.shortcuts import render
 
@@ -20,3 +23,8 @@ def sondage_2012(request):
     return HttpResponse("Hello, we've done the scrapping")
 
 
+def import_static_files(request):
+    json_data = open('./static/french_politicians.json')
+    data = json.load(json_data)
+    print data
+    json_data.close()
