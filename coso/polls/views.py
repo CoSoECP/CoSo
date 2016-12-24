@@ -2,7 +2,6 @@ import json
 import urllib2
 from bs4 import BeautifulSoup
 
-
 from django.http import HttpResponse
 from django.shortcuts import render
 
