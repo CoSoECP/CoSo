@@ -19,11 +19,4 @@ def sondage_2012(request):
                 data[i].append(cells[i].get_text())
 
 
-    return HttpResponse("Hello, we've done the scrapping")
-
-
-def import_static_files(request):
-    json_data = open('./static/french_politicians.json')
-    data = json.load(json_data)
-    print data
-    json_data.close()
+    return HttpResponse("Hello, we've done the scrapping.")
