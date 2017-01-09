@@ -16,8 +16,8 @@ class Candidate(models.Model):
     name = models.CharField(max_length=50)
     surname = models.CharField(max_length=50)
     birth_date = models.DateTimeField(blank=True, null=True)
-    birth_place = models.ForeignKey(Place, on_delete=models.CASCADE, blank=True, null=True)
-    nationality = models.ForeignKey(Place, on_delete=models.CASCADE, blank=True, null=True)
+    birth_place = models.ForeignKey(Place, related_name="custom_birth_place", on_delete=models.CASCADE, blank=True, null=True)
+    nationality = models.ForeignKey(Place, related_name="custom_nationality", on_delete=models.CASCADE, blank=True, null=True)
 
 
 class Election(models.Model):
@@ -81,7 +81,7 @@ class PoliticalFunction(models.Model):
 
 
 class Role(models.Model):
-    candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE)
+    candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE, blank=True, null=True)
     beginning_date = models.DateTimeField(blank=True, null=True)
     end_date = models.DateTimeField(blank = True, null=True)
     election = models.ForeignKey(Election, on_delete=models.CASCADE, blank=True, null=True)
