@@ -52,9 +52,9 @@ def import_trends(request_content):
 
 def new_election():
     _place, created = Place.objects.get_or_create(country="France")
-    _election, created = Election.objects.get_or_create(date=datetime.datetime(2016,12,05), place_id = _place.id)
-    _candidate1, created = Candidate.objects.get_or_create(name="Valls", surname = "Manuel", birth_date=datetime.datetime(1968,12,05), birth_place_id= _place.id, nationality="French")
-    _candidate2, created = Candidate.objects.get_or_create(name="Peillon", surname = "Vincent", birth_date=datetime.datetime(1968,12,05), birth_place_id= _place.id, nationality="French")
+    _election, created = Election.objects.get_or_create(date=datetime.datetime(2017,01,22), place_id = _place.id)
+    _candidate1, created = Candidate.objects.get_or_create(name="Valls", surname = "Manuel", birth_date=datetime.datetime(1968,12,05), birth_place_id= _place.id, nationality_id= _place.id)
+    _candidate2, created = Candidate.objects.get_or_create(name="Peillon", surname = "Vincent", birth_date=datetime.datetime(1968,12,05), birth_place_id= _place.id, nationality_id= _place.id)
     _result1, created = Result.objects.get_or_create(election_id = _election.id, candidate_id = _candidate1.id)
     _result2, created = Result.objects.get_or_create(election_id = _election.id, candidate_id = _candidate2.id)
 
@@ -62,18 +62,18 @@ def new_election():
 def analysis_from_google(request):
     new_election()
     data=[]
-    elections = Election.object.all()
+    elections = Election.objects.all()
     for election in elections:
         request_content = []
         liste_candidat = []
-        candidats=election.candidates
+        candidats=election.candidates.all()
         for candidat in candidats:
-            liste_candidat.append(candidat)
+            liste_candidat.append(candidat.surname + " " + candidat.name)
         vecteur_candidat=", ".join(liste_candidat)
         date=election.date
         annee=date.year
-        mois=date.month
-        date_temp=[mois,annee]
+        mois=date.month -1
+        date_temp=[str(mois),str(annee)]
         date_format="/".join(date_temp)
         request_content.append(vecteur_candidat)
         request_content.append("FR")
