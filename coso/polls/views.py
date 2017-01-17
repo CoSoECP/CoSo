@@ -1,5 +1,7 @@
+import json
 import urllib2
 from bs4 import BeautifulSoup
+
 from django.http import HttpResponse
 from django.shortcuts import render
 
@@ -17,6 +19,4 @@ def sondage_2012(request):
                 data[i].append(cells[i].get_text())
 
 
-    return HttpResponse("Hello, we've done the scrapping")
-
-
+    return HttpResponse("Hello, we've done the scrapping.")

@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
 import os
+import sys
+from path import Path
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -27,6 +29,13 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+
+PROJECT_ROOT = Path(__file__).abspath().dirname().dirname()
+SITE_ROOT = PROJECT_ROOT.dirname()
+
+sys.path.append(SITE_ROOT)
+sys.path.append(PROJECT_ROOT / 'coso')
+sys.path.append(PROJECT_ROOT / 'libs')
 
 # Application definition
 
@@ -126,3 +135,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# Wikipedia Base API URL
+WIKIPEDIA_BASE_API_URL = "https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&rvsection=0&format=json&titles="
+

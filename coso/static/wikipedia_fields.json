@@ -1,0 +1,26 @@
+{
+    "fields" : [
+        "name",
+        "nationality",
+        "party",
+        "birth_name",
+        "birth_date",
+        "birth_place",
+        "death_place",
+        "death_date",
+        "partner",
+        "spouse",
+        "religion",
+        "children",
+        "alma_mater",
+    ],
+    "offices_fields" : [
+        "office",
+        "term_start",
+        "term_end",
+        "predecessor",
+        "successor",
+        "president",
+        "primeminister"
+    ]
+}

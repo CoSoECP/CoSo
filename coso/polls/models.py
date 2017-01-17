@@ -77,7 +77,7 @@ class Party(models.Model):
 
 
 class PoliticalFunction(models.Model):
-    position = models.CharField(max_length=50)
+    position = models.CharField(max_length=200)
 
 
 class Role(models.Model):
