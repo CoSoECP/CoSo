@@ -33,7 +33,7 @@ class Election(models.Model):
 class Result(models.Model):
     candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE)
     election = models.ForeignKey(Election, on_delete=models.CASCADE)
-    voting_result = models.DecimalField(max_digits=4, decimal_places=2)
+    voting_result = models.DecimalField(max_digits=4, decimal_places=2, blank=True, null=True)
 
 
 class TrendSource(models.Model):
@@ -49,7 +49,7 @@ class Trend(models.Model):
     score = models.DecimalField(max_digits=4,decimal_places=2)
     weight = models.DecimalField(blank=True, null=True, max_digits=4,decimal_places=2)
     trend_source = models.ForeignKey(TrendSource, on_delete=models.CASCADE)
-
+        
 
 class Party(models.Model):
     name = models.CharField(max_length=50)

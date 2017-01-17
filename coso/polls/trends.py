@@ -24,5 +24,3 @@ def import_trends(request):
     df = pytrend.trend(trend_payload, return_type='dataframe')
     return(df)
 
-
-import_trends(vecteur,pays,date)
