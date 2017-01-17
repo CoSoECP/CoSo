@@ -24,3 +24,8 @@ def import_trends(request):
     df = pytrend.trend(trend_payload, return_type='dataframe')
     return(df)
 
+<<<<<<< HEAD
+=======
+
+import_trends(vecteur,pays,date)
+>>>>>>> 938a592fbc3b3a0adbce03c40bdc482831353bf5
