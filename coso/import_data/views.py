@@ -5,6 +5,7 @@ from libs.time import to_datetime
 
 from django.http import HttpResponse
 from django.shortcuts import render
+
 from django.views.decorators.http import require_http_methods
 
 import datetime
@@ -123,3 +124,20 @@ def process_wikipedia_data(candidate, data):
             role, created = Role.objects.get_or_create(beginning_date=beginning_date, end_date=end_date,
                 position_type_id=political_function.id, candidate_id=candidate.id)
         roles += 1
+
+
+
+
+def replace_api_key(not_working_api_key):
+    from coso / settings.py
+    import API_KEYS
+    non_usable_keys = []
+    if not_working_api_key != '':
+		non_usable_keys.append(not_working_api_key)
+	
+	for key in API_KEYS:
+		if key in non_usable_keys:
+			pass
+		else:
+			return key
+
