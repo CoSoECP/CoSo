@@ -3,6 +3,7 @@
         "election": "Présidentielles tour 1",
         "annee": 2007,
         "mois": 4,
+        "jour":22,
         "candidats": ["Nicolas Sarkozy", "Ségolène Royal", "François Bayrou", "Jean-Marie Le Pen","Olivier Besancenot"],
         "resultats":{"Nicolas Sarkozy":31.18, "Ségolène Royal":25.87, "François Bayrou":18.57, "Jean-Marie Le Pen":10.44,"Olivier Besancenot":4.08}
     },
@@ -11,6 +12,7 @@
         "election": "Présidentielles tour 1",
         "annee": 2012,
         "mois": 4,
+        "jour":22,
         "candidats": ["François Hollande","Nicolas Sarkozy","Marine Le Pen","Jean-Luc Mélenchon","François Bayrou"],
         "resultats":{"François Hollande":28.63,"Nicolas Sarkozy":27.18,"Marine Le Pen":17.90,"Jean-Luc Mélenchon":11.10,"François Bayrou":9.13}
     },
@@ -19,6 +21,7 @@
         "election": "Présidentielles tour 1",
         "annee": 2017,
         "mois": 4,
+        "jour":23,
         "candidats": [],
         "resultats":{}
     },
@@ -26,6 +29,7 @@
         "election": "Présidentielles tour 2",
         "annee": 2007,
         "mois": 5,
+        "jour":6,
         "candidats": ["Nicolas Sarkozy","Ségolène Royal"],
         "resultats":{"Nicolas Sarkozy":53.06,"Ségolène Royal":46.94}
     },
@@ -34,6 +38,7 @@
         "election": "Présidentielles tour 2",
         "annee": 2012,
         "mois": 5,
+        "jour":6,
         "candidats": ["François Hollande", "Nicolas Sarkozy"],
         "resultats":{"François Hollande":51.64, "Nicolas Sarkozy":48.36}
     },
@@ -42,6 +47,7 @@
         "election": "Présidentielles tour 2",
         "annee": 2017,
         "mois": 5,
+        "jour":7,
         "candidats": [],
         "resultats":{}
     },
@@ -50,6 +56,7 @@
         "election": "Primaire gauche tour 1",
         "annee": 2006,
         "mois": 11,
+        "jour":16,
         "candidats": ["Ségolène Royal","Dominique Strauss-Kahn","Laurent Fabius"],
         "resultats":{"Ségolène Royal":60.65,"Dominique Strauss-Kahn":20.69,"Laurent Fabius":18.66}
     },
@@ -57,6 +64,7 @@
         "election": "Pimaire droite tour 1",
         "annee": 2007,
         "mois": 1,
+        "jour":14,
         "candidats": ["Nicolas Sarkozy"],
         "resultats":{"Nicolas Sarkozy":98.09}
     },
@@ -66,6 +74,7 @@
         "election": "Primaire gauche tour 1",
         "annee": 2011,
         "mois": 10,
+        "jour":9,
         "candidats": ["François Hollande","Martine Aubry","Arnaud Montebourg","Ségolène Royal","Manuel Valls"],
         "resultats":{"François Hollande":39.17,"Martine Aubry":30.42,"Arnaud Montebourg":17.19,"Ségolène Royal":6.95,"Manuel Valls":5.63}
     },
@@ -73,6 +82,7 @@
         "election": "Primaire gauche tour 2",
         "annee": 2011,
         "mois": 10,
+        "jour":16,
         "candidats": ["François Hollande","Martine Aubry"],
         "resultats":{"François Hollande":56.57,"Martine Aubry":43.43}
     },
@@ -81,6 +91,7 @@
         "election": "Primaire gauche tour 1",
         "annee": 2017,
         "mois": 1,
+        "jour":22,
         "candidats": ["Benoît Hamon","Manuel Valls","Arnaud Montebourg"],
         "resultats":{"Benoît Hamon":36.35,"Manuel Valls":31.11,"Arnaud Montebourg":17.52}
     },
@@ -88,6 +99,7 @@
         "election": "Primaire gauche tour 2",
         "annee": 2017,
         "mois": 1,
+        "jour":29,
         "candidats": ["Benoît Hamon","Manuel Valls"],
         "resultats":{}
     },
@@ -95,6 +107,7 @@
         "election": "Primaire droite tour 1",
         "annee": 2017,
         "mois": 11,
+        "jour":20,
         "candidats": ["François Fillon","Alain Juppé","Nicolas Sarkozy"],
         "resultats":{"François Fillon":44.08,"Alain Juppé":28.56,"Nicolas Sarkozy":20.67}
     },
@@ -102,6 +115,7 @@
         "election": "Primaire droite tour 2",
         "annee": 2017,
         "mois": 11,
+        "jour":27,
         "candidats": ["François Fillon","Alain Juppé"],
         "resultats":{"François Fillon":66.49,"Alain Juppé":33.51}
     }
