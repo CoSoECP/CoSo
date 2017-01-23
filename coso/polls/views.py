@@ -52,7 +52,7 @@ def import_trends(request_content):
 
 def new_election():
     _place, created = Place.objects.get_or_create(country="France")
-    _election, created = Election.objects.get_or_create(date=datetime.datetime(2017,01,22), place_id = _place.id)
+    _election, created = Election.objects.get_or_create(date=datetime.datetime(2016,12,22), place_id = _place.id)
     _candidate1, created = Candidate.objects.get_or_create(name="Valls", surname = "Manuel", birth_date=datetime.datetime(1968,12,05), birth_place_id= _place.id, nationality_id= _place.id)
     _candidate2, created = Candidate.objects.get_or_create(name="Peillon", surname = "Vincent", birth_date=datetime.datetime(1968,12,05), birth_place_id= _place.id, nationality_id= _place.id)
     _result1, created = Result.objects.get_or_create(election_id = _election.id, candidate_id = _candidate1.id)
@@ -72,7 +72,10 @@ def analysis_from_google(request):
         vecteur_candidat=", ".join(liste_candidat)
         date=election.date
         annee=date.year
-        mois=date.month -1
+        if date.month > 1:
+            mois = date.month - 1
+        else:
+            mois = 12
         date_temp=[str(mois),str(annee)]
         date_format="/".join(date_temp)
         request_content.append(vecteur_candidat)
