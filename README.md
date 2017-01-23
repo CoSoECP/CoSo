@@ -147,3 +147,12 @@ Pre-installed:
 2. For example, if the changes are in the polls app : `$ python manage.py makemigrations polls`
 3. You should see a new file in polls/migrations: polls/migrations/000x.py
 4. To apply the migration to the Database : `$ python manage.py migrate`
+
+## 5. Tests
+
+How to run tests ? Use the following command
+
+`$ python manage.py test polls` to run the tests from polls/tests.py
+
+This command will create the test database and run all the tests.
+Doc : https://docs.djangoproject.com/en/1.10/intro/tutorial05/
