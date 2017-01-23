@@ -1,17 +1,15 @@
-from coso.settings import WIKIPEDIA_BASE_API_URL
-from polls.models import Candidate, Place, PoliticalFunction, Role
-
-from libs.time import to_datetime
-
-from django.http import HttpResponse
-from django.shortcuts import render
-
-from django.views.decorators.http import require_http_methods
-
 import datetime
 import json
 import logging
+
 import requests
+from django.http import HttpResponse
+from django.views.decorators.http import require_http_methods
+
+from coso.coso.settings import API_KEYS
+from coso.polls.models import Candidate, Place, PoliticalFunction, Role
+from libs.time import to_datetime
+
 
 @require_http_methods(["GET"])
 def french_candidates(request):
@@ -26,11 +24,12 @@ def french_candidates(request):
     json_data.close()
     return HttpResponse("Candidates import worked well")
 
+
 @require_http_methods(["GET"])
 def from_wikipedia(request):
     """
-    This method will get some information for each candidate in the DB from wikipedia
-    """
+	This method will get some information for each candidate in the DB from wikipedia
+	"""
     candidates = Candidate.objects.all()
     for candidate in candidates:
         url = WIKIPEDIA_BASE_API_URL
@@ -44,14 +43,15 @@ def from_wikipedia(request):
                 text = text["query"]["pages"][page_id]["revisions"][0]["*"]
                 starting_index = text.index("|name") if "|name" in text else text.index("birth_date")
                 text = text[starting_index + 1:]
-                #text.replace("=", "")
+                # text.replace("=", "")
                 data = text.split("\n|")
                 data = clean_data(data)
                 process_wikipedia_data(candidate, data)
         else:
             logging.warning("Wikipedia info import for %s %s did not work"
-                % (candidate.name, candidate.surname))
+                            % (candidate.name, candidate.surname))
     return HttpResponse("Working on it")
+
 
 def clean_data(data):
     cleaned_data = {}
@@ -67,6 +67,7 @@ def clean_data(data):
         cleaned_data[element[0]] = value
     return cleaned_data
 
+
 def process_birth_date(str_date):
     # birth date and age|1954|8|12|df=y
     start = str_date.index("|")
@@ -74,6 +75,7 @@ def process_birth_date(str_date):
     date = str_date[start + 1:end]
     date = date.split("|")
     return datetime.date(int(date[0]), int(date[1]), int(date[2]))
+
 
 def process_wikipedia_data(candidate, data):
     if not candidate.birth_date and "birth_date" in data.keys():
@@ -117,27 +119,23 @@ def process_wikipedia_data(candidate, data):
                 end = end.replace("=", "")
                 end = end.lstrip()
                 logging.warning(end)
-                try :
+                try:
                     end_date = to_datetime(end)
                 except ValueError:
                     end_date = None
             role, created = Role.objects.get_or_create(beginning_date=beginning_date, end_date=end_date,
-                position_type_id=political_function.id, candidate_id=candidate.id)
+                                                       position_type_id=political_function.id,
+                                                       candidate_id=candidate.id)
         roles += 1
 
 
-
-
 def replace_api_key(not_working_api_key):
-    from coso / settings.py
-    import API_KEYS
     non_usable_keys = []
     if not_working_api_key != '':
-		non_usable_keys.append(not_working_api_key)
-	
-	for key in API_KEYS:
-		if key in non_usable_keys:
-			pass
-		else:
-			return key
+        non_usable_keys.append(not_working_api_key)
 
+    for key in API_KEYS:
+        if key in non_usable_keys:
+            pass
+        else:
+            return key
