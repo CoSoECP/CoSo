@@ -1,11 +1,12 @@
 from coso.settings import WIKIPEDIA_BASE_API_URL
-from polls.models import Candidate, Place, PoliticalFunction, Role
+from polls.models import Candidate, Place, PoliticalFunction, Role, Election, Result
 
 from libs.time import to_datetime
 
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
+
 
 import datetime
 import json
@@ -24,6 +25,25 @@ def french_candidates(request):
         )
     json_data.close()
     return HttpResponse("Candidates import worked well")
+
+@require_http_methods(["GET"])
+def french_elections(request):
+    # Only GET request will go that far
+    json_data = open('./static/french_elections.json')
+    raw_data = json.load(json_data)
+    for raw_election in raw_data:
+        election = Election.objects.get_or_create(
+            date=datetime.date(int(raw_election["annee"]),int(raw_election["mois"]),int(raw_election["jour"])),
+            place="France"
+        )
+        for candidate in raw_election["candidats"]:
+            result = Result.objects.get_or_create(
+            candidate = candidate,
+            election = election,
+            voting_result = raw_election["résultats"][candidate]
+            )
+    json_data.close()
+    return HttpResponse("Elections and results import worked well")
 
 @require_http_methods(["GET"])
 def from_wikipedia(request):
