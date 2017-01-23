@@ -28,17 +28,18 @@ def french_candidates(request):
 @require_http_methods(["GET"])
 def french_elections(request):
     # Only GET request will go that far
+    _place, created = Place.objects.get_or_create(country="France")
     json_data = open('./static/french_elections.json')
     raw_data = json.load(json_data)
     for raw_election in raw_data:
-        election = Election.objects.get_or_create(
-            date=datetime.date(int(raw_election["annee"]),int(raw_election["mois"]),int(raw_election["jour"])),
-            place="France"
+        _election, created = Election.objects.get_or_create(
+            date=datetime.datetime(int(raw_election["annee"]),int(raw_election["mois"]),int(raw_election["jour"])),
+            place_id=_place.id
         )
         for candidate in raw_election["candidats"]:
-            result = Result.objects.get_or_create(
+            _result, created = Result.objects.get_or_create(
             candidate = candidate,
-            election = election,
+            election_id = _election.id,
             voting_result = raw_election["résultats"][candidate]
             )
     json_data.close()
