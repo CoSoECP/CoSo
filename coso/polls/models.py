@@ -45,6 +45,7 @@ class Candidate(models.Model):
 
 
 class Election(models.Model):
+    name = models.CharField(max_length=50)
     date = models.DateTimeField(blank=True, null=True)
     place = models.ForeignKey(Place, on_delete=models.CASCADE)
     candidates = models.ManyToManyField(
