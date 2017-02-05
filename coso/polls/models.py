@@ -1,5 +1,8 @@
 from __future__ import unicode_literals
 
+from coso.settings import WIKIPEDIA_IMAGE_URL, WIKIPEDIA_IMAGE_EXTENSION
+
+from django.core.validators import URLValidator
 from django.db import models
 from django.template.defaultfilters import truncatechars
 
@@ -35,13 +38,17 @@ class Candidate(models.Model):
     birth_date = models.DateTimeField(blank=True, null=True)
     birth_place = models.ForeignKey(Place, related_name="custom_birth_place", on_delete=models.CASCADE, blank=True, null=True)
     nationality = models.ForeignKey(Place, related_name="custom_nationality", on_delete=models.CASCADE, blank=True, null=True)
-
+    image_url = models.TextField(validators=[URLValidator()], blank=True, null=True)
 
     def __str__(self):
         return self.name + " " + self.surname
 
     def __unicode__(self):
         return self.name + " " + self.surname
+
+    @property
+    def image(self):
+        return self.image_url
 
 
 class Election(models.Model):

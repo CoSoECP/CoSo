@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="jumbotron">
+        <h1>Elections</h1>
+        <p>Voici la liste des élections disponibles sur COSO. Pour obtenir des informations sur l'une d'entre elles, cliquer sur l'image. Si vous souhaitez rajouter des élections à la liste, n'hésitez pas à nous <a class="mailto"href="mailto:#">contacter</a>.</p>
+    </div>
+
+    <div class="row">
+        <ul>
+            {% load static %}
+            {% for election in object_list %}
+                <div class="col-sm-4 col-md-4">
+                    <div class="thumbnail">
+                      <img src="{% static 'images/elections-graphic-hands.png' %}" alt="...">
+                      <div class="caption">
+                        <h3>Élections présidentielles {{ election.date.year }}</h3>
+                        <p>{{ election.date }}</p>
+                        <p>{{ election.place.city }}</p>
+                        <p><a href="#" class="btn btn-primary" role="button">Sélectionner</a></p>
+                      </div>
+                    </div>
+                  </div>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}

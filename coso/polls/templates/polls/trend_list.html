@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Trends</h2>
+    <ul>
+        {% for trend in object_list %}
+            <li>Id : {{ trend.id }}, candidat : {{ trend.candidate }}, date : {{ trend.date }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

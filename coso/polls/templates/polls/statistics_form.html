@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="jumbotron">
+        <h1>Statistiques</h1>
+        <p>Bienvenu sur le module Statistiques. Sélectionner une élection et un candidat pour obtenir le taux de confiance COSO sur sa réussite.</p>
+        <!--p><a class="btn btn-primary btn-lg" href="#" role="button">Commencer</a></p-->
+
+    </div>
+    <h2> Statistiques </h2>
+    <h3> Choisir une élection </h3>
+    <form action="/polls/results/" method="post">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Submit" />
+    </form>
+    <h3> Choisir un candidat </h3>
+    <form action="/polls/results/" method="post">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Submit" />
+    </form>
+{% endblock %}

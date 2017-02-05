@@ -1,6 +1,5 @@
 from coso.settings import WIKIPEDIA_BASE_API_URL
 from polls.models import Candidate, Place, PoliticalFunction, Role
-
 from libs.time import to_datetime
 
 from django.http import HttpResponse
@@ -11,6 +10,9 @@ import datetime
 import json
 import logging
 import requests
+import urllib2
+from bs4 import BeautifulSoup
+
 
 @require_http_methods(["GET"])
 def french_candidates(request):
@@ -123,3 +125,20 @@ def process_wikipedia_data(candidate, data):
             role, created = Role.objects.get_or_create(beginning_date=beginning_date, end_date=end_date,
                 position_type_id=political_function.id, candidate_id=candidate.id)
         roles += 1
+
+@require_http_methods(['GET'])
+def sondage_2012(request):
+    wiki = "http://www.sondages-en-france.fr/sondages/Elections/Pr%C3%A9sidentielles%202012"
+    page = urllib2.urlopen(wiki)
+    soup = BeautifulSoup(page)
+    right_table = soup.find("table",class_="summaryTable")
+    data = [[]]
+
+    for row in right_table.findAll("tr"):
+        cells=row.findAll("td")
+        if len(cells) == 14:
+            for i in range(len(data)):
+                data[i].append(cells[i].get_text())
+
+
+    return HttpResponse("Hello, we've done the scrapping.")
