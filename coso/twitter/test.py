@@ -1,4 +1,5 @@
-from functions import produce_json
+from functions import produce_json, different_classes
 
-print(produce_json('2017-01-15', 'PrimaireGauche'))
+different_classes()
+produce_json('2017-01-15', 'PrimaireGauche')
 

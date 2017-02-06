@@ -1,3 +1,5 @@
 from django.test import TestCase
+import views
 
-# Create your tests here.
+def test_aggregate_by_day(filtered_list, day):
+	return False
