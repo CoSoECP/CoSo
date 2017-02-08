@@ -1,13 +1,17 @@
-from polls.models import Candidate, Election, Trend
+from polls.models import Candidate, Election, Trend, Statistics
+from libs.time import french_format_to_datetime
 
 from django import forms
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.core import serializers
 from django.http import HttpResponse, HttpResponseForbidden, HttpResponseRedirect
 from django.shortcuts import render
 from django.views import View
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormView
+
+import json
 
 
 def authenticate_view(request):
@@ -72,21 +76,32 @@ class TrendDetailView(DetailView):
     template_name = "polls/trend_detail.html"
 
 
-class StatisticsForm(forms.Form):
-    election = forms.ModelChoiceField(Election.objects)
-    candidate = forms.ModelChoiceField(Candidate.objects.filter(id=1))
-    #candidates = [(candidate.id, "%s %s" % (candidate.name, candidate.surname)) for candidate in election.candidates.all()]
-    #candidate = forms.ChoiceField(candidates)
-
-    def send_stat(self):
-        pass
-
-
-class StatisticsView(FormView):
-    form_class = StatisticsForm
-    sucess_url = "/success/"
+class StatisticsView(ListView):
+    context_object_name = "statistics_list"
+    queryset = Statistics.objects.all()
     template_name = "polls/statistics_form.html"
 
-    def form_valid(self):
-        form.send_stat()
-        return super(StatisticsView, self).form_valid(form)
+    def get_context_data(self, *args, **kwargs):
+        context = super(StatisticsView, self).get_context_data(**kwargs)
+        elections = Election.objects.all()
+        context['elections'] = elections
+        context['json_elections'] = [int(election.id) for election in elections]
+        #context["candidates"] = serializers.serialize('json', Candidate.objects.all(), fields=('id', 'name', 'surname',))
+        candidates = Candidate.objects.all()
+        candidates = {int(candidate.id) : "'%s %s'" % (candidate.name, candidate.surname) for candidate in candidates}
+        context["candidates"]  = json.dumps(candidates)
+        candidates_by_election = {int(election.id) : [int(candidate.id) for candidate in election.candidates.all()] for election in elections}
+        context["candidates_by_election"] = candidates_by_election
+        return context
+
+    def post(self, request, *args, **kwargs):
+        election_id = request.POST.get("electionId", "")
+        candidate_id = request.POST.get("candidateId", "")
+        start_date = request.POST.get("startDate", "")
+        end_date = request.POST.get("endDate", "")
+        election = Election.objects.get(id=election_id)
+        candidate = Candidate.objects.get(id=candidate_id)
+        start = french_format_to_datetime(start_date)
+        end_date = french_format_to_datetime(end_date)
+        results = "toto"
+        return render(request, 'polls/statistics.html', {'results': results})

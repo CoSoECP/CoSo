@@ -1,7 +1,6 @@
 from __future__ import unicode_literals
 
-from coso.settings import WIKIPEDIA_IMAGE_URL, WIKIPEDIA_IMAGE_EXTENSION
-
+from django.contrib.auth.models import User
 from django.core.validators import URLValidator
 from django.db import models
 from django.template.defaultfilters import truncatechars
@@ -159,8 +158,16 @@ class Role(models.Model):
                 output.append(value)
         return ", ".join(map(str, output))
 
+
 class DetailedResults(models.Model):
     place = models.ForeignKey(Place, on_delete=models.CASCADE)
     election = models.ForeignKey(Election, on_delete=models.CASCADE)
     candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE)
     vote_number = models.IntegerField(default=0)
+
+
+class Statistics(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    election = models.ForeignKey(Election, on_delete=models.CASCADE)
+    candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE)
+    score = models.DecimalField(max_digits=4 ,decimal_places=3)

@@ -1,23 +1,74 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="jumbotron">
-        <h1>Statistiques</h1>
-        <p>Bienvenu sur le module Statistiques. Sélectionner une élection et un candidat pour obtenir le taux de confiance COSO sur sa réussite.</p>
-        <!--p><a class="btn btn-primary btn-lg" href="#" role="button">Commencer</a></p-->
 
+<script type="text/javascript" charset="utf-8" >
+
+var elections = {{ json_elections }};
+var candidates = "{{ candidates }}";
+candidates = candidates.replace(/&quot;/g, '"');
+candidates = candidates.replace(/&#39;/g, "");
+candidates = JSON.parse(candidates);
+var candidates_by_elections = {{ candidates_by_election }};
+
+function changeElection(value) {
+    //var value = document.getElementById("election_id").value;
+    if (candidates_by_elections[value].length > 0){
+        for(i = 0; i < candidates_by_elections[value].length; i++){
+            var newSelect = document.getElementById("candidateId");
+            var opt = document.createElement("option");
+            opt.value = candidates_by_elections[value][i];
+            opt.innerHTML = candidates[candidates_by_elections[value][i]]; // whatever property it has
+            // then append it to the select element
+            newSelect.appendChild(opt);
+        }
+    } else {
+        $('#candidateId')
+            .find('option')
+            .remove()
+            .end()
+    }
+};
+
+</script>
+
+<div class="jumbotron">
+    <h1>Statistiques</h1>
+    <p>Bienvenu sur le module "Statistiques". Sélectionner une élection et un candidat pour obtenir le taux de confiance COSO sur sa réussite.</p>
+</div>
+<div class="row">
+    <div class="col-md-10 col-md-offset-1">
+        <div class="panel panel-primary">
+          <div class="panel-body panel-statistics">
+            <form action="/polls/statistics/" method="post" class="form-horizontal">
+              {% csrf_token %}
+              <div class="form-group">
+                <label id="label"  for="electionId">Choisir une élection</label>
+                <select class="form-control" name="electionId" id="electionId" onchange="changeElection(value);">
+                  <option value="" selected> </option>
+                  {% for election in elections %}
+                    <option value="{{ election.id }}">{{ election.date }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="candidateId">Choisir un candidat</label>
+                <select class="form-control" name="candidateId" id="candidateId">
+                  <option value=""> </option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="startDate">Date de début</label>
+                <input type="text" class="form-control" id="startDate" name="startDate" placeholder="JJ/MM/AAAA">
+              </div>
+              <div class="form-group">
+                <label for="endDate">Date de fin</label>
+                <input type="text" class="form-control" id="endDate" name="endDate" placeholder="JJ/MM/AAAA">
+              </div>
+              <button type="submit" class="btn btn-default" value="Submit">Rechercher</button>
+            </form>
+          </div>
+        </div>
     </div>
-    <h2> Statistiques </h2>
-    <h3> Choisir une élection </h3>
-    <form action="/polls/results/" method="post">
-        {% csrf_token %}
-        {{ form }}
-        <input type="submit" value="Submit" />
-    </form>
-    <h3> Choisir un candidat </h3>
-    <form action="/polls/results/" method="post">
-        {% csrf_token %}
-        {{ form }}
-        <input type="submit" value="Submit" />
-    </form>
+</div>
 {% endblock %}
