@@ -3,18 +3,41 @@ from django.shortcuts import render
 from datetime import time, datetime
 from repustate import Client
 import os
+import sys
 import tweepy
+from json import load
+from django.http import HttpResponseNotFound
 
-currentdir = os.getwcd()
-parentdir = os.path.dirname(currentdir)
-coso = parentdir + '/coso'
-os.path.insert(0, coso)
-polls = parentdir + '/polls'
-os.path.insert(0, polls)
-from settings import API_KEYS
-from models import Trend, Place, Election, Candidate, Result, TrendSource
+# currentdir = os.getcwd()
+# parentdir = os.path.dirname(currentdir)
+# coso = parentdir + '/coso'
+# sys.path.insert(0, coso)
+# polls = parentdir + '/polls'
+# sys.path.insert(0, polls)
+from coso.settings import API_KEYS
+from polls.models import Trend, Place, Election, Candidate, Result, TrendSource
 
 non_usable_keys=[]
+
+
+def get_twitter_trends(request):
+	start_date = request.POST.get("start_date","")
+	end_date = request.POST.get("start_end","")
+	tag = request.POST.get("tag","")
+	election_id = request.POST.get("election","")
+	try:
+		election = Election.objects.get(id=election_id)
+	except Entry.DoesNotExist:
+		return HttpResponseNotFound("Candidate not found")
+	start = datetime.strptime(start_date, '%Y-%m-%d')
+	end = datetime.strptime(end_date, '%Y-%m-%d')
+	user_token = 0
+	while start <= end:
+		save_to_database(start, tag, user_token, election)
+		start += datetime.deltatime(1)
+		user_token += 1
+		if user_token > 4:
+			user_token = 0
 
 
 def replace_api_key(not_working_api_key):
@@ -28,41 +51,20 @@ def replace_api_key(not_working_api_key):
 			return key
 
 
-def objects_to_create():
-    place, created = Place.objects.get_or_create(country="France")
-    election, created = Election.objects.get_or_create(date=datetime.datetime(2016,12,22), place_id = place.id)
-    valls, created = Candidate.objects.get_or_create(name="Valls", surname = "Manuel", birth_date=datetime.datetime(1968,12,05), birth_place_id= place.id, nationality_id= place.id)
-    montebourg, created = Candidate.objects.get_or_create(name="Montebourg", surname = "Arnaud", birth_place_id= place.id, nationality_id= place.id)
-    hamon, created = Candidate.objects.get_or_create(name="Hamon", surname = "Benoit", nationality_id= place.id)
-    bennahmias, created = Candidate.objects.get_or_create(name="Bennahmias", surname = "Jean-Luc", nationality_id= place.id)
-    de_rugy, created = Candidate.objects.get_or_create(name="De Rugy", surname = "François", nationality_id= place.id)
-    pinel, created = Candidate.objects.get_or_create(name="Pinel", surname = "Sylvia", nationality_id= place.id)
-    peillon, created = Candidate.objects.get_or_create(name="Peillon", surname = "Vincent", birth_date=datetime.datetime(1968,12,05), birth_place_id= place.id, nationality_id= place.id)
-    result1, created = Result.objects.get_or_create(election_id = election.id, candidate_id = valls.id)
-    result2, created = Result.objects.get_or_create(election_id = election.id, candidate_id = montebourg.id)
-    twitter, created = TrendSource.objects.get_or_create(name = 'Twitter')
-    candidates_created = [valls, montebourg, hamon, bennahmias, de_rugy, pinel, peillon]
-    return (place, election, twitter, candidates_created)
+# def candidate_list():
+#     candidates =[]
 
 
-
-
-def candidate_list():
-    candidates =[
-    ]
-
-
-def get_tweets_by_day(day, tag):
-    from json import load
+def get_tweets_by_day(day, tag, user_token):
     filename = os.path.dirname(os.getcwd()) + "/static/access.json"
     with open(filename) as file:
         token = load(file)
 
-    auth = tweepy.OAuthHandler(token[0]["consumer_key"], token[0]["consumer_secret"])
-    auth.set_access_token(token[0]["access_key"], token[0]["access_secret"])
+    auth = tweepy.OAuthHandler(token[user_token]["consumer_key"], token[user_token]["consumer_secret"])
+    auth.set_access_token(token[user_token]["access_key"], token[user_token]["access_secret"])
     api = tweepy.API(auth, wait_on_rate_limit=True)
 
-    date = datetime.datetime.strptime(day, '%Y-%m-%d')
+    date = datetime.strptime(day, '%Y-%m-%d')
     next_date = date + datetime.timedelta(days=1)
     next_day = next_date.strftime('%Y-%m-%d')
 
@@ -70,7 +72,7 @@ def get_tweets_by_day(day, tag):
                          until=next_day).items(25)
 
 
-def filter_tweets_by_day(tweets, day, list_of_candidate_names):
+def filter_tweets_by_day(tweets, day, election):
     api_key = replace_api_key('')
     filtered_list = []
 
@@ -79,8 +81,8 @@ def filter_tweets_by_day(tweets, day, list_of_candidate_names):
             tweet = tweets.next()
             text = tweet.text
             print(tweet.created_at)
-            for candidate in list_of_candidate_names:
-                if text.find(candidate) != -1:
+            for candidate in election.candidates.all():
+                if text.find(candidate.surname) != -1:
                     filtered_tweet = {
                         'created_at': day,
                         'text': text,
@@ -110,7 +112,7 @@ def get_score(text, api_key):
         get_score(text, replace_api_key(api_key))
 
 
-def aggregate_by_day(filtered_list, day):
+def aggregate_by_day(filtered_list, day, election):
     result = {}
     final_result = []
     for tweet in filtered_list:
@@ -118,18 +120,14 @@ def aggregate_by_day(filtered_list, day):
 
     (place, election, twitter, candidates_created) = objects_to_create()
     index = 0
-    for candidate in result.keys():
-        for can in candidates_created: # On parcourt la liste des candidats que l'on a crées à la main avec get_or_create
-             if can.name == candidate:
-                index = candidates_created.index(can)
-        trend = Trend.objects.get_or_create(
-            place = place.id,
+    for candidate in result:
+        trend = Trend(
+            place_id = place.id,
             date = datetime.strptime(day, '%Y-%m-%d'),
-            election = election.id,
-            candidate = candidates_created[index].id,
-            score = result[candidate]['score']/result[candidate]['weight'],
+            election_id = election.id,
+            candidate_id = candidate.id,
             weight = result[candidate]['weight'],
-            trend_source = twitter.id
+            trend_source_id = twitter.id
 
         )
         trend.save()
@@ -151,21 +149,21 @@ def aggregate_by_day(filtered_list, day):
     # return final_result
 
 
-def add_value(dict, candidate, score):
-    if candidate not in dict:
-        dict[candidate] = {
+def add_value(dictionary, candidate, score):
+    if candidate not in dictionary:
+        dictionary[candidate] = {
             'score': float(score),
             'weight': 1
         }
     else:
-        dict[candidate]['score'] += float(score)
-        dict[candidate]['weight'] += 1
+        dictionary[candidate]['score'] += float(score)
+        dictionary[candidate]['weight'] += 1
 
 
-def produce_json(day, tag):
-    list_of_candidate_names = {"valls", "montebourg", "hamon"}
+def save_to_database(day, tag, user_token, election):
+    # list_of_candidate_names = {"valls", "montebourg", "hamon"}
 
-    tweets = get_tweets_by_day(day, tag)
+    tweets = get_tweets_by_day(day, tag, user_token)
     filtered_list = filter_tweets_by_day(tweets, day, list_of_candidate_names)
     # return aggregate_by_day(filtered_list, day)
-    aggregate_by_day(filtered_list, day)
+    aggregate_by_day(filtered_list, day, election)
