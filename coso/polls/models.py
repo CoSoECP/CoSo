@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from django.contrib.auth.models import User
 from django.core.validators import URLValidator
 from django.db import models
+from django.db.models import Avg, Count, Min, Max, StdDev
 from django.template.defaultfilters import truncatechars
 
 from libs.time import datetime_to_string
@@ -48,6 +49,10 @@ class Candidate(models.Model):
     @property
     def image(self):
         return self.image_url
+
+    @property
+    def complete_name(self):
+        return "%s %s" % (self.name, self.surname)
 
 
 class Election(models.Model):
@@ -140,7 +145,7 @@ class PoliticalFunction(models.Model):
 class Role(models.Model):
     candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE, blank=True, null=True)
     beginning_date = models.DateTimeField(blank=True, null=True)
-    end_date = models.DateTimeField(blank = True, null=True)
+    end_date = models.DateTimeField(blank=True, null=True)
     election = models.ForeignKey(Election, on_delete=models.CASCADE, blank=True, null=True)
     position_type = models.ForeignKey(PoliticalFunction, on_delete=models.CASCADE, blank=True, null=True)
 
@@ -171,3 +176,20 @@ class Statistics(models.Model):
     election = models.ForeignKey(Election, on_delete=models.CASCADE)
     candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE)
     score = models.DecimalField(max_digits=4 ,decimal_places=3)
+    start_date = models.DateTimeField(blank=True, null=True)
+    end_date = models.DateTimeField(blank=True, null=True)
+
+    def get_results(self):
+        twitter = TrendSource.objects.get(name="Twitter")
+        twitter_stats = Trend.objects.filter(
+            trend_source_id=twitter.id,
+            candidate_id=self.candidate.id,
+            date__gte=self.start_date,
+            date__lte=self.end_date).aggregate(average=Avg("score"), standard_deviation=StdDev("score"), min_value=Min("score"), max_value=StdDev("score"))
+        google = TrendSource.objects.get(name="Google Trends")
+        google_stats = Trend.objects.filter(
+            trend_source_id=google.id,
+            candidate_id=self.candidate.id,
+            date__gte=self.start_date,
+            date__lte=self.end_date).aggregate(average=Avg("score"), standard_deviation=StdDev("score"), min_value=Min("score"), max_value=StdDev("score"))
+        return (twitter_stats, google_stats)

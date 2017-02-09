@@ -37,9 +37,10 @@ function changeElection(value) {
     <p>Bienvenu sur le module "Statistiques". Sélectionner une élection et un candidat pour obtenir le taux de confiance COSO sur sa réussite.</p>
 </div>
 <div class="row">
-    <div class="col-md-10 col-md-offset-1">
+    <div class="col-md-12">
         <div class="panel panel-primary">
           <div class="panel-body panel-statistics">
+            <h1>Nouvelle recherche</h1>
             <form action="/polls/statistics/" method="post" class="form-horizontal">
               {% csrf_token %}
               <div class="form-group">
@@ -47,7 +48,7 @@ function changeElection(value) {
                 <select class="form-control" name="electionId" id="electionId" onchange="changeElection(value);">
                   <option value="" selected> </option>
                   {% for election in elections %}
-                    <option value="{{ election.id }}">{{ election.date }}</option>
+                    <option value="{{ election.id }}">{{ election.date|date:"d/m/Y" }}</option>
                   {% endfor %}
                 </select>
               </div>
@@ -59,16 +60,49 @@ function changeElection(value) {
               </div>
               <div class="form-group">
                 <label for="startDate">Date de début</label>
-                <input type="text" class="form-control" id="startDate" name="startDate" placeholder="JJ/MM/AAAA">
+                <input type="text" class="form-control" id="startDate" name="startDate" placeholder="JJ/MM/AAAA" required>
               </div>
               <div class="form-group">
                 <label for="endDate">Date de fin</label>
-                <input type="text" class="form-control" id="endDate" name="endDate" placeholder="JJ/MM/AAAA">
+                <input type="text" class="form-control" id="endDate" name="endDate" placeholder="JJ/MM/AAAA" required>
               </div>
               <button type="submit" class="btn btn-default" value="Submit">Rechercher</button>
             </form>
           </div>
         </div>
     </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-primary">
+          <div class="panel-body panel-statistics">
+            <h1>Historique des statistiques obtenus</h1>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Élection</th>
+                        <th>Candidat</th>
+                        <th>Date de début</th>
+                        <th>Date de fin</th>
+                        <th class="text-center">Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for statistic in statistics %}
+                    <tr>
+                        <td>{{ statistic.id }}</td>
+                        <td>{{ statistic.election.date|date:"d/m/Y" }}</td>
+                        <td>{{ statistic.candidate.complete_name }}</td>
+                        <td>{{ statistic.start_date|date:"d/m/Y" }}</td>
+                        <td>{{ statistic.end_date|date:"d/m/Y" }}</td>
+                        <td class="text-center">{{ statistic.score|floatformat:4 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+          </div>
+      </div>
+  </div>
 </div>
 {% endblock %}

@@ -1,6 +1,117 @@
 {% extends "base.html" %}
 
-{% block content %}
-    {{ results }}
+{% load static %}
 
+{% block content %}
+<div class="jumbotron">
+    <h1>Statistiques</h1>
+    <p>Module "Statistiques" : cliquer sur le bouton ci-dessous pour faire une nouvelle recherche</p>
+    <a href="/polls/statistics/" class="btn btn-default">Nouvelle statistique</a>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-primary">
+          <div class="panel-body panel-statistics">
+            <h1>Résultats</h1>
+            <div class="col-md-12">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Élection</th>
+                            <th>Candidat</th>
+                            <th>Date de début</th>
+                            <th>Date de fin</th>
+                            <th>Score (Twitter + Google Trends)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{ 1 }}</td>
+                            <td>{{ statistic.election.date|date:"d/m/Y" }}</td>
+                            <td>{{ statistic.candidate.complete_name }}</td>
+                            <td>{{ statistic.start_date|date:"d/m/Y" }}</td>
+                            <td>{{ statistic.end_date|date:"d/m/Y" }}</td>
+                            <td class="text-center">{{ statistic.score|floatformat:3 }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+          </div>
+        </div>
+        {% for result in results %}
+            <div class="panel panel-primary">
+              <div class="panel-body panel-statistics">
+                <div class="col-md-12">
+                {% if forloop.first %}
+                    <h3>
+                        Détail
+                        <img src="{% static 'images/Twitter_bird.svg' %}" style="height:30px; margin-left:32px;" alt="twitter">
+                        Twitter
+                        <small style="margin-left:32px;">Valeurs entre -1 et 1</small>
+                    </h3>
+                {% else %}
+                    <h3>
+                        Détail
+                        <img src="{% static 'images/google-trends.png' %}" style="height:80px;" alt="...">
+                        <small>Valeurs entre 0 et 1</small>
+                    </h3>
+                {% endif %}
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th class="text-center">Moyenne</th>
+                                <th class="text-center">Écart-type</th>
+                                <th class="text-center">Valeur maximale</th>
+                                <th class="text-center">Valeur minimale</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="text-center">{{ result.average|floatformat:4 }}</td>
+                                <td class="text-center">+/-{{ result.standard_deviation|floatformat:4 }}</td>
+                                <td class="text-center">{{ result.max_value|floatformat:4 }}</td>
+                                <td class="text-center">{{ result.min_value|floatformat:4 }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+              </div>
+            </div>
+        {% endfor %}
+  </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-primary">
+          <div class="panel-body panel-statistics">
+            <h1>Historique des statistiques précédentes</h1>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Élection</th>
+                        <th>Candidat</th>
+                        <th>Date de début</th>
+                        <th>Date de fin</th>
+                        <th class="text-center">Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for previous_statistic in previous_statistics %}
+                    <tr>
+                        <td>{{ previous_statistic.id }}</td>
+                        <td>{{ previous_statistic.election.date|date:"d/m/Y" }}</td>
+                        <td>{{ previous_statistic.candidate.complete_name }}</td>
+                        <td>{{ previous_statistic.start_date|date:"d/m/Y" }}</td>
+                        <td>{{ previous_statistic.end_date|date:"d/m/Y" }}</td>
+                        <td class="text-center">{{ previous_statistic.score|floatformat:3 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+          </div>
+      </div>
+  </div>
+</div>
 {% endblock %}
