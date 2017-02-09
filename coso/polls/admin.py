@@ -6,7 +6,7 @@ from polls.models import Place, Candidate, Election, Result, \
 
 
 class CandidateAdmin(admin.ModelAdmin):
-    fields = ('name', 'surname', 'birth_date', 'birth_place', 'nationality')
+    fields = ('name', 'surname', 'birth_date', 'birth_place', 'nationality', 'image_url')
     list_display = fields
 
 

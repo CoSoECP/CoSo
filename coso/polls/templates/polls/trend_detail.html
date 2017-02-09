@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Trend for 
+        {{ trend.candidate.name }} {{ trend.candidate.surname }} on {{ trend.date}}
+    </h2>
+    <ul>
+        <li>Id : {{ trend.id }}</li>
+        <li>Candidat : 
+            <ul>
+                <li>Prénom : {{ trend.candidate.name }}</li>
+                <li>Nom : {{ candidate.surname }}</li>
+            </ul>
+        </li>
+        <li>Élection : {{ trend.election }}</li>
+        <li>Score : {{ trend.score }}</li>
+        <li>Weight : {{ trend.weight }}</li>
+        <li>TrendSource : {{ trend.trend_source }}</li>
+    </ul>
+{% endblock %}

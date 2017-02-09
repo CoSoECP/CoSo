@@ -1,0 +1,18 @@
+@import url("login.css");
+@import url("statistics.css");
+
+body { padding-top: 70px; }
+
+a.navbar-brand.coso {
+    padding:0;
+}
+a.mailto {
+    color:white;
+    text-decoration: underline;
+}
+
+
+.jumbotron {
+    background-color: rgba(53, 74, 130, 1);
+    color:white;
+}

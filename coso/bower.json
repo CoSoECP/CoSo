@@ -1,0 +1,22 @@
+{
+  "name": "coso",
+  "homepage": "https://github.com/CoSoECP/CoSo",
+  "authors": [
+    "Melanie Berard <melanie.berard@student.ecp.fr>"
+  ],
+  "description": "comportement sondage",
+  "main": "manage.py",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "polls/static/",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "^3.3.7"
+  }
+}
