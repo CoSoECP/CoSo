@@ -1,22 +1,18 @@
-from coso.settings import WIKIPEDIA_BASE_API_URL
-from polls.models import Candidate, Place, PoliticalFunction, Role
-from coso.polls.models import Candidate, Place, PoliticalFunction, Role
+# -*- coding: UTF-8 -*-
+from coso.settings import WIKIPEDIA_BASE_API_URL, API_KEYS
+from polls.models import Candidate, Place, PoliticalFunction, Role, Trend, Election, Result, TrendSource
 from libs.time import to_datetime
-from coso.settings import API_KEYS
-from polls.models import Trend, Place, Election, Candidate, Result, TrendSource
 
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
 from django.http import HttpResponseNotFound
 from django.http import HttpResponse
-from django.views.decorators.http import require_http_methods
 
-import datetime
 import json
 import logging
 import requests
-from datetime import time, datetime
+from datetime import time, datetime, timedelta
 from repustate import Client
 import os
 import sys
@@ -142,17 +138,7 @@ def process_wikipedia_data(candidate, data):
                                                        candidate_id=candidate.id)
         roles += 1
 
-# -*- coding: UTF-8 -*-
 
-
-
-
-# currentdir = os.getcwd()
-# parentdir = os.path.dirname(currentdir)
-# coso = parentdir + '/coso'
-# sys.path.insert(0, coso)
-# polls = parentdir + '/polls'
-# sys.path.insert(0, polls)
 
 non_usable_keys=[]
 
@@ -164,14 +150,14 @@ def get_twitter_trends(request):
 	election_id = request.POST.get("election","")
 	try:
 		election = Election.objects.get(id=election_id)
-	except Entry.DoesNotExist:
+	except election.DoesNotExist:
 		return HttpResponseNotFound("Candidate not found")
 	start = datetime.strptime(start_date, '%Y-%m-%d')
 	end = datetime.strptime(end_date, '%Y-%m-%d')
 	user_token = 0
 	while start <= end:
 		save_to_database(start, tag, user_token, election)
-		start += datetime.deltatime(1)
+		start += timedelta(1)
 		user_token += 1
 		if user_token > 4:
 			user_token = 0
@@ -193,7 +179,7 @@ def replace_api_key(not_working_api_key):
 
 
 def get_tweets_by_day(day, tag, user_token):
-    filename = os.path.dirname(os.getcwd()) + "/static/access.json"
+    filename = os.getcwd()+ "/static/access.json"
     with open(filename) as file:
         token = load(file)
 
@@ -202,7 +188,7 @@ def get_tweets_by_day(day, tag, user_token):
     api = tweepy.API(auth, wait_on_rate_limit=True)
 
     date = datetime.strptime(day, '%Y-%m-%d')
-    next_date = date + datetime.timedelta(days=1)
+    next_date = date + timedelta(days=1)
     next_day = next_date.strftime('%Y-%m-%d')
 
     return tweepy.Cursor(api.search, q=tag, since=day,
@@ -253,7 +239,7 @@ def aggregate_by_day(filtered_list, day, election):
     for tweet in filtered_list:
         add_value(result, tweet['candidate'], tweet['score'])
 
-    (place, election, twitter, candidates_created) = objects_to_create()
+    place = Place(counrty = 'France')
     index = 0
     for candidate in result:
         trend = Trend(
