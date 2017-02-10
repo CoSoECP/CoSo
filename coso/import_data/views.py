@@ -20,7 +20,6 @@ import tweepy
 from json import load
 
 
-
 @require_http_methods(["GET"])
 def french_candidates(request):
     # Only GET request will go that far
@@ -204,7 +203,8 @@ def filter_tweets_by_day(tweets, day, election):
             tweet = tweets.next()
             text = tweet.text
             print(tweet.created_at)
-            for candidate in election.candidates.all():
+            for candidate in election.candidates.all(): 
+            # On parcourt l'ensemble des candidats associés à l'objet election
                 if text.find(candidate.surname) != -1:
                     filtered_tweet = {
                         'created_at': day,
@@ -240,6 +240,7 @@ def aggregate_by_day(filtered_list, day, election):
         add_value(result, tweet['candidate'], tweet['score'])
 
     place = Place(counrty = 'France')
+    twitter = TrendSource(name="Twitter")
     index = 0
     for candidate in result:
         trend = Trend(
@@ -247,6 +248,7 @@ def aggregate_by_day(filtered_list, day, election):
             date = datetime.strptime(day, '%Y-%m-%d'),
             election_id = election.id,
             candidate_id = candidate.id,
+            score = result[candidate]['score'] / result[candidate]['weight'],
             weight = result[candidate]['weight'],
             trend_source_id = twitter.id
 
@@ -285,7 +287,7 @@ def save_to_database(day, tag, user_token, election):
     # list_of_candidate_names = {"valls", "montebourg", "hamon"}
 
     tweets = get_tweets_by_day(day, tag, user_token)
-    filtered_list = filter_tweets_by_day(tweets, day, list_of_candidate_names)
+    filtered_list = filter_tweets_by_day(tweets, day, election)
     # return aggregate_by_day(filtered_list, day)
 
     aggregate_by_day(filtered_list, day, election)
