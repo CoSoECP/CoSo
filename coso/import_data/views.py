@@ -40,7 +40,7 @@ def french_elections(request):
             _result, created = Result.objects.get_or_create(
             candidate = candidate,
             election_id = _election.id,
-            voting_result = raw_election["résultats"][candidate]
+            voting_result = raw_election["resultats"][candidate]
             )
     json_data.close()
     return HttpResponse("Elections and results import worked well")
