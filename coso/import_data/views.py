@@ -36,11 +36,12 @@ def french_elections(request):
             date=datetime.datetime(int(raw_election["annee"]),int(raw_election["mois"]),int(raw_election["jour"])),
             place_id=_place.id
         )
-        for candidate in raw_election["candidats"]:
+        for candidate in raw_election["resultats"]:
             _result, created = Result.objects.get_or_create(
-            candidate = candidate,
+            name = candidate["name"],
+            surname = candidate["surname"],
             election_id = _election.id,
-            voting_result = raw_election["résultats"][candidate]
+            voting_result = candidate["score"]
             )
     json_data.close()
     return HttpResponse("Elections and results import worked well")
