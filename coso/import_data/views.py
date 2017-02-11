@@ -28,7 +28,7 @@ def french_candidates(request):
 @require_http_methods(["GET"])
 def french_elections(request):
     # Only GET request will go that far
-    _place, created = Place.objects.get_or_create(country="France")
+    _place, created = Place.objects.get_or_create(country="France", city="Paris")
     json_data = open('./static/french_elections.json')
     raw_data = json.load(json_data)
     for raw_election in raw_data:
