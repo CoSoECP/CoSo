@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 from django.http import HttpResponse
 from django.shortcuts import render
 
-from polls.models import Election, Place, Candidate, Result
+from polls.models import Election, Place, Candidate, Result, Trend, TrendSource
 
 import datetime
 
@@ -57,12 +57,15 @@ def new_election():
     _candidate2, created = Candidate.objects.get_or_create(name="Peillon", surname = "Vincent", birth_date=datetime.datetime(1968,12,05), birth_place_id= _place.id, nationality_id= _place.id)
     _result1, created = Result.objects.get_or_create(election_id = _election.id, candidate_id = _candidate1.id)
     _result2, created = Result.objects.get_or_create(election_id = _election.id, candidate_id = _candidate2.id)
+    
 
 
 def analysis_from_google(request):
-    new_election()
+    #elections = Election.objects.all()
+    elections = [Election.objects.get(id=1)]
+    _twitter, created = TrendSource.objects.get_or_create(name = "Twitter")
+    total = 0.00
     data=[]
-    elections = Election.objects.all()
     for election in elections:
         request_content = []
         liste_candidat = []
@@ -71,17 +74,29 @@ def analysis_from_google(request):
             liste_candidat.append(candidat.surname + " " + candidat.name)
         vecteur_candidat=", ".join(liste_candidat)
         date=election.date
+        mois = date.month
         annee=date.year
-        if date.month > 1:
-            mois = date.month - 1
-        else:
-            mois = 12
+        #if date.month > 1:
+        #    mois = date.month - 1
+        #    annee=date.year
+        #else:
+        #    mois = 12
+        #    annee=date.year - 1
         date_temp=[str(mois),str(annee)]
         date_format="/".join(date_temp)
         request_content.append(vecteur_candidat)
         request_content.append("FR")
         request_content.append(date_format)
-        data.append(import_trends(request_content))
-    print(data)
+        my_data = import_trends(request_content)
+        for daily_date in my_data.index:
+            for candidate in candidats:
+                total = 0
+                candidate_name =  candidate.surname + " " + candidate.name
+                if (isinstance(my_data.loc[daily_date, candidate_name.lower()], (int, float, long))):
+                    candidate_weight = round(float(my_data.loc[daily_date, candidate_name.lower()]),2)
+                total = total + candidate_weight
+            for candidate in candidats:
+                candidate_name =  candidate.surname + " " + candidate.name
+                if total !=0:
+                    _trend, created = Trend.objects.get_or_create(place_id = election.place.id, date = pandas.to_datetime(daily_date), election_id = election.id, candidate_id = candidate.id, score = round(candidate_weight/total,2), weight = candidate_weight, trend_source_id = _twitter.id)
     return HttpResponse("Hello, we've done the Google Analysis")
-

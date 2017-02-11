@@ -46,8 +46,8 @@ class Trend(models.Model):
     date = models.DateTimeField(blank=True, null=True)
     election = models.ForeignKey(Election, on_delete=models.CASCADE)
     candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE)
-    score = models.DecimalField(max_digits=4,decimal_places=2)
-    weight = models.DecimalField(blank=True, null=True, max_digits=4,decimal_places=2)
+    score = models.DecimalField(max_digits=5,decimal_places=2)
+    weight = models.DecimalField(blank=True, null=True, max_digits=5,decimal_places=2)
     trend_source = models.ForeignKey(TrendSource, on_delete=models.CASCADE)
         
 
