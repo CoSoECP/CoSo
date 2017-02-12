@@ -13,7 +13,7 @@ class Place(models.Model):
     department = models.TextField(max_length=50, blank=True, null=True)
     county = models.TextField(max_length=50, blank=True, null=True)
     city = models.TextField(max_length=50, blank=True, null=True)
-    
+
     def __str__(self):
         output = []
         for attr, value in self.__dict__.iteritems():

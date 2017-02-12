@@ -19,8 +19,6 @@ import urllib2
 import pandas
 
 from settings import GOOGLE_USERNAME, GOOGLE_PASSWORD
-google_username = GOOGLE_USERNAME
-google_password = GOOGLE_PASSWORD
 path = ""
 
 @require_http_methods(["GET"])
@@ -167,7 +165,7 @@ def import_trends(request_content):
     date = request_content[2]
 
     # connect to Google
-    pytrend = TrendReq(google_username, google_password, custom_useragent='My Coso Script')
+    pytrend = TrendReq(GOOGLE_USERNAME, GOOGLE_PASSWORD, custom_useragent='My Coso Script')
 
 
     trend_payload = {'q': vecteur, 'hl': 'fr-FR', 'geo': pays,'date': date + ' 2m'}
