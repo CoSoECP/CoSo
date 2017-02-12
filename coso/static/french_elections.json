@@ -1,0 +1,122 @@
+[
+    {
+        "election": "Présidentielles tour 1",
+        "annee": 2007,
+        "mois": 4,
+        "jour":22,
+        "candidats": [{"name":"Nicolas","surname":"Sarkozy"},{"name":"Ségolène","surname":"Royal"},{"name":"Jean-Marie","surname":"Le Pen"},{"name":"Olivier","surname":"Besancenot"},{"name":"François","surname":"Bayrou"}],
+        "resultats":[{"name":"Nicolas","surname":"Sarkozy","score":31.18},{"name":"Ségolène","surname":"Royal","score":25.87},{"name":"François","surname":"Bayrou","score":18.57},{"name":"Jean-Marie","surname":"Le Pen","score":10.44},{"name":"Olivier","surname":"Besancenot","score":4.08}]
+    },
+
+    {
+        "election": "Présidentielles tour 1",
+        "annee": 2012,
+        "mois": 4,
+        "jour":22,
+        "candidats": [{"name":"Nicolas","surname":"Sarkozy"},{"name":"François","surname":"Hollande"},{"name":"Marine","surname":"Le Pen"},{"name":"Jean-Luc","surname":"Mélanchon"},{"name":"François","surname":"Bayrou"}],
+        "resultats": [{"name":"Nicolas","surname":"Sarkozy","score":27.18},{"name":"François","surname":"Hollande","score":28.63},{"name":"Marine","surname":"Le Pen","score":17.90},{"name":"Jean-Luc","surname":"Mélanchon","score":11.10},{"name":"François","surname":"Bayrou","score":9.13}]
+    },
+
+    {
+        "election": "Présidentielles tour 1",
+        "annee": 2017,
+        "mois": 4,
+        "jour":23,
+        "candidats": [],
+        "resultats":{}
+    },
+    {
+        "election": "Présidentielles tour 2",
+        "annee": 2007,
+        "mois": 5,
+        "jour":6,
+        "candidats": [{"name":"Nicolas","surname":"Sarkozy"},{"name":"Ségolène","surname":"Royal"}],
+        "resultats": [{"name":"Nicolas","surname":"Sarkozy","score":53.06},{"name":"Ségolène","surname":"Royal","score":46.94}]
+    },
+
+    {
+        "election": "Présidentielles tour 2",
+        "annee": 2012,
+        "mois": 5,
+        "jour":6,
+        "candidats": [{"name":"Nicolas","surname":"Sarkozy"},{"name":"François","surname":"Hollande"}],
+        "resultats": [{"name":"Nicolas","surname":"Sarkozy","score":48.36},{"name":"François","surname":"Hollande","score":51.64}]
+    },
+
+    {
+        "election": "Présidentielles tour 2",
+        "annee": 2017,
+        "mois": 5,
+        "jour":7,
+        "candidats": [],
+        "resultats":{}
+    },
+
+    {
+        "election": "Primaire gauche tour 1",
+        "annee": 2006,
+        "mois": 11,
+        "jour":16,
+        "candidats": [{"name":"Ségolène","surname":"Royal"},{"name":"Dominique","surname":"Strauss-Kahn"},{"name":"Laurent","surname":"Fabius"}],
+        "resultats": [{"name":"Ségolène","surname":"Royal","score":60.65},{"name":"Dominique","surname":"Strauss-Kahn","score":20.69},{"name":"Laurent","surname":"Fabius","score":19.66}]
+    },
+    {
+        "election": "Pimaire droite tour 1",
+        "annee": 2007,
+        "mois": 1,
+        "jour":14,
+        "candidats": [{"name":"Nicolas","surname":"Sarkozy"}],
+        "resultats":[{"name":"Nicolas","surname":"Sarkozy","score":98.09}]
+    },
+
+
+    {
+        "election": "Primaire gauche tour 1",
+        "annee": 2011,
+        "mois": 10,
+        "jour":9,
+        "candidats": [{"name":"François","surname" :"Hollande"},{"name":"Martine","surname":"Aubry"},{"name":"Arnaud","surname":"Montebourg"},{"name":"Ségolène","surname":"Royal"},{"name":"Manuel","surname":"Valls"}],
+        "resultats": [{"name":"François","surname" :"Hollande","score":39.17},{"name":"Martine","surname":"Aubry","score":30.42},{"name":"Arnaud","surname":"Montebourg","score":17.19},{"name":"Ségolène","surname":"Royal","score":6.95},{"name":"Manuel","surname":"Valls","score":5.63}]
+    },
+    {
+        "election": "Primaire gauche tour 2",
+        "annee": 2011,
+        "mois": 10,
+        "jour":16,
+        "candidats": [{"name":"François","surname":"Hollande"},{"name":"Martine","surname":"Aubry"}],
+        "resultats": [{"name":"François","surname":"Hollande","score":56.57},{"name":"Martine","surname":"Aubry","score":43.43}]
+    },
+
+    {
+        "election": "Primaire gauche tour 1",
+        "annee": 2017,
+        "mois": 1,
+        "jour":22,
+        "candidats": [{"name":"Benoît","surname":"Hamon"},{"name":"Manuel","surname":"Valls"},{"name":"Arnaud","surname":"Montebourg"}],
+        "resultats": [{"name":"Benoît","surname":"Hamon","score":36.35},{"name":"Manuel","surname":"Valls","score":31.11},{"name":"Arnaud","surname":"Montebourg","score":17.52}]
+    },
+    {
+        "election": "Primaire gauche tour 2",
+        "annee": 2017,
+        "mois": 1,
+        "jour":29,
+        "candidats": [{"name":"Benoît","surname":"Hamon"},{"name":"Manuel","surname":"Valls"}],
+        "resultats": [{"name":"Benoît","surname":"Hamon","score":58.7},{"name":"Manuel","surname":"Valls","score":42.3}]
+    },
+    {
+        "election": "Primaire droite tour 1",
+        "annee": 2017,
+        "mois": 11,
+        "jour":20,
+        "candidats": [{"name":"François","surname":"Fillon"},{"name":"Alain","surname":"Juppé"},{"name":"Nicolas","surname":"Sarkozy"}],
+        "resultats": [{"name":"François","surname":"Fillon","score":44.08},{"name":"Alain","surname":"Juppé","score":28.56},{"name":"Nicolas","surname":"Sarkozy","score":20.67}]
+    },
+    {
+        "election": "Primaire droite tour 2",
+        "annee": 2017,
+        "mois": 11,
+        "jour":27,
+        "candidats": [{"name":"François","surname":"Fillon"},{"name":"Alain","surname":"Juppé"}],
+        "resultats": [{"name":"François","surname":"Fillon","score":66.49},{"name":"Alain","surname":"Juppé","score":33.51}]
+    }
+]

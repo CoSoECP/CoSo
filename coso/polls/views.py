@@ -7,6 +7,13 @@ from django.shortcuts import render
 from threading import Thread
 
 
+from polls.models import Election, Place, Candidate, Result, Trend, TrendSource
+
+import datetime
+
+from pytrends.request import TrendReq
+import pandas
+
 def sondage_2012(request):
     wiki = "http://www.sondages-en-france.fr/sondages/Elections/Pr%C3%A9sidentielles%202012"
     page = urllib2.urlopen(wiki)
