@@ -1,5 +1,5 @@
 from coso.settings import WIKIPEDIA_BASE_API_URL
-from polls.models import Candidate, Place, PoliticalFunction, Role, Election, Result
+from polls.models import Candidate, Place, PoliticalFunction, Role, Election, Result, Trend, TrendSource
 
 from libs.time import to_datetime
 
@@ -7,10 +7,21 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
 
+from bs4 import BeautifulSoup
+
+from pytrends.request import TrendReq
+
 import datetime
 import json
 import logging
 import requests
+import urllib2
+import pandas
+
+from settings import GOOGLE_USERNAME, GOOGLE_PASSWORD
+google_username = GOOGLE_USERNAME
+google_password = GOOGLE_PASSWORD
+path = ""
 
 @require_http_methods(["GET"])
 def french_candidates(request):
@@ -147,3 +158,58 @@ def process_wikipedia_data(candidate, data):
             role, created = Role.objects.get_or_create(beginning_date=beginning_date, end_date=end_date,
                 position_type_id=political_function.id, candidate_id=candidate.id)
         roles += 1
+
+
+def import_trends(request_content):
+
+    vecteur = request_content[0]
+    pays = request_content[1]
+    date = request_content[2]
+
+    # connect to Google
+    pytrend = TrendReq(google_username, google_password, custom_useragent='My Coso Script')
+
+
+    trend_payload = {'q': vecteur, 'hl': 'fr-FR', 'geo': pays,'date': date + ' 2m'}
+
+    # trend
+    trend = pytrend.trend(trend_payload)
+    df = pytrend.trend(trend_payload, return_type='dataframe')
+    return(df)
+
+
+def analysis_from_google(request, election_id):
+    elections = [Election.objects.get(id=election_id)]
+    _google_trends, created = TrendSource.objects.get_or_create(name = "Google Trends")
+    total = 0.00
+    data=[]
+    for election in elections:
+        request_content = []
+        liste_candidat = []
+        candidats=election.candidates.all()
+        for candidat in candidats:
+            liste_candidat.append(candidat.surname + " " + candidat.name)
+        vecteur_candidat=", ".join(liste_candidat)
+        date=election.date
+        mois = date.month
+        annee=date.year
+        date_temp=[str(mois),str(annee)]
+        date_format="/".join(date_temp)
+        request_content.append(vecteur_candidat)
+        request_content.append("FR")
+        request_content.append(date_format)
+        my_data = import_trends(request_content)
+        for daily_date in my_data.index:
+            for candidate in candidats:
+                total = 0
+                candidate_name =  candidate.surname + " " + candidate.name
+                if (isinstance(my_data.loc[daily_date, candidate_name.lower()], (int, float, long))):
+                    candidate_weight = round(float(my_data.loc[daily_date, candidate_name.lower()]),2)
+                total = total + candidate_weight
+            for candidate in candidats:
+                candidate_name =  candidate.surname + " " + candidate.name
+                if (total !=0 and str(total) != "nan"):
+                    _trend, created = Trend.objects.get_or_create(place_id = election.place.id, date = pandas.to_datetime(daily_date), election_id = election.id, candidate_id = candidate.id, score = round(candidate_weight/total,2), weight = candidate_weight, trend_source_id = _google_trends.id)
+    return HttpResponse("Hello, we've done the Google Analysis")
+
+

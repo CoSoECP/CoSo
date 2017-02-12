@@ -11,6 +11,29 @@ class Place(models.Model):
     county = models.TextField(max_length=50, blank=True, null=True)
     city = models.TextField(max_length=50, blank=True, null=True)
 
+class Party(models.Model):
+    name = models.CharField(max_length=50)
+    FARLEFT = 'FL'
+    LEFT = 'LE'
+    CENTER = 'CE'
+    RIGHT = 'RI'
+    FARRIGHT = 'FR'
+    ORIENTATION_CHOICES = (
+        (FARLEFT, 'FarLeft'),
+        (LEFT, 'Left'),
+        (CENTER, 'Center'),
+        (RIGHT, 'Right'),
+        (FARRIGHT, 'FarRight'),
+    )
+    political_orientation = models.CharField(
+        max_length=2,
+        choices=ORIENTATION_CHOICES,
+        default=CENTER,
+    )
+    creation_date = models.DateTimeField(blank=True, null=True)
+    parent = models.ForeignKey('Party', on_delete=models.CASCADE, blank = True, null = True)
+    place = models.ForeignKey(Place, on_delete=models.CASCADE)
+    pass
 
 class Candidate(models.Model):
     name = models.CharField(max_length=50)
@@ -18,7 +41,7 @@ class Candidate(models.Model):
     birth_date = models.DateTimeField(blank=True, null=True)
     birth_place = models.ForeignKey(Place, related_name="custom_birth_place", on_delete=models.CASCADE, blank=True, null=True)
     nationality = models.ForeignKey(Place, related_name="custom_nationality", on_delete=models.CASCADE, blank=True, null=True)
-
+    party = models.ForeignKey(Party, on_delete=models.CASCADE, blank=True, null=True)
 
 class Election(models.Model):
     date = models.DateTimeField(blank=True, null=True)
@@ -50,31 +73,6 @@ class Trend(models.Model):
     weight = models.DecimalField(blank=True, null=True, max_digits=5,decimal_places=2)
     trend_source = models.ForeignKey(TrendSource, on_delete=models.CASCADE)
         
-
-class Party(models.Model):
-    name = models.CharField(max_length=50)
-    FARLEFT = 'FL'
-    LEFT = 'LE'
-    CENTER = 'CE'
-    RIGHT = 'RI'
-    FARRIGHT = 'FR'
-    ORIENTATION_CHOICES = (
-        (FARLEFT, 'FarLeft'),
-        (LEFT, 'Left'),
-        (CENTER, 'Center'),
-        (RIGHT, 'Right'),
-        (FARRIGHT, 'FarRight'),
-    )
-    political_orientation = models.CharField(
-        max_length=2,
-        choices=ORIENTATION_CHOICES,
-        default=CENTER,
-    )
-    creation_date = models.DateTimeField(blank=True, null=True)
-    parent = models.ForeignKey('Party', on_delete=models.CASCADE, blank = True, null = True)
-    place = models.ForeignKey(Place, on_delete=models.CASCADE)
-    pass
-
 
 class PoliticalFunction(models.Model):
     position = models.CharField(max_length=200)
