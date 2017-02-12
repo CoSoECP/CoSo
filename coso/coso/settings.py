@@ -101,6 +101,12 @@ DATABASES = {
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
 
+API_KEYS = [
+    'ba4d9fc03cf92a82683a4292b6f0b3db1171029e',
+    '595a15193686aa66742ec3c80c97a40d821fb14c',
+    '287ff3d949ec738ab5b784b5682777f7372ddce1'
+]
+
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
