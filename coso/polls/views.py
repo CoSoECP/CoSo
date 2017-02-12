@@ -11,6 +11,8 @@ from django.views import View
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormView
 
+import json
+
 
 def authenticate_view(request):
     return render(request, 'polls/login.html')

@@ -91,6 +91,12 @@ class Election(models.Model):
         through_fields=('election', 'candidate'),
     )
 
+    @property
+    def print_name(self):
+        if self.name == None:
+            return ("Election du %s" % self.date)
+        return "%s %s" % (self.name, self.date)
+
 
 class Result(models.Model):
     candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE)
@@ -114,8 +120,8 @@ class Trend(models.Model):
     date = models.DateTimeField(blank=True, null=True)
     election = models.ForeignKey(Election, on_delete=models.CASCADE)
     candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE)
-    score = models.DecimalField(max_digits=5,decimal_places=2)
-    weight = models.DecimalField(blank=True, null=True, max_digits=5,decimal_places=2)
+    score = models.DecimalField(max_digits=10,decimal_places=3)
+    weight = models.DecimalField(blank=True, null=True, max_digits=10,decimal_places=3)
     trend_source = models.ForeignKey(TrendSource, on_delete=models.CASCADE)
 
     def __unicode__(self):

@@ -147,3 +147,6 @@ STATIC_URL = '/static/'
 # Wikipedia Base API URL
 WIKIPEDIA_BASE_API_URL = "https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&rvsection=0&format=json&titles="
 
+# Data from Google Trends
+GOOGLE_USERNAME = ""
+GOOGLE_PASSWORD = ""

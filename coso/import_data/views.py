@@ -12,7 +12,7 @@ from django.http import HttpResponseNotFound
 from django.http import HttpResponse
 
 from bs4 import BeautifulSoup
-from datetime import datetime, strptime, time, timedelta
+from datetime import datetime, time, timedelta
 from json import load
 from pytrends.request import TrendReq
 from repustate import Client
@@ -269,8 +269,8 @@ def get_twitter_trends(request, election_id, start_date, end_date, tag):
         election = Election.objects.get(id=election_id)
     except Election.DoesNotExist:
         return HttpResponseNotFound("Candidate not found")
-    start = strptime(start_date, '%Y_%m_%d')
-    end = strptime(end_date, '%Y_%m_%d')
+    start = datetime.strptime(start_date, '%Y_%m_%d')
+    end = datetime.strptime(end_date, '%Y_%m_%d')
     user_token = 0
     while start < end:
         save_to_database(start, tag, election)
