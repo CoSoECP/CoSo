@@ -60,9 +60,9 @@ def new_election():
     
 
 
-def analysis_from_google(request):
+def analysis_from_google(request, election_id):
     #elections = Election.objects.all()
-    elections = [Election.objects.get(id=1)]
+    elections = [Election.objects.get(id=election_id)]
     _twitter, created = TrendSource.objects.get_or_create(name = "Twitter")
     total = 0.00
     data=[]
@@ -97,6 +97,6 @@ def analysis_from_google(request):
                 total = total + candidate_weight
             for candidate in candidats:
                 candidate_name =  candidate.surname + " " + candidate.name
-                if total !=0:
+                if (total !=0 and str(total) != "nan"):
                     _trend, created = Trend.objects.get_or_create(place_id = election.place.id, date = pandas.to_datetime(daily_date), election_id = election.id, candidate_id = candidate.id, score = round(candidate_weight/total,2), weight = candidate_weight, trend_source_id = _twitter.id)
     return HttpResponse("Hello, we've done the Google Analysis")
