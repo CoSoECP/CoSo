@@ -2,6 +2,7 @@
 from coso.settings import WIKIPEDIA_BASE_API_URL, API_KEYS
 from polls.models import Candidate, Place, PoliticalFunction, Role, Trend, Election, Result, TrendSource
 from libs.time import to_datetime
+from libs import got
 
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -138,40 +139,28 @@ def process_wikipedia_data(candidate, data):
         roles += 1
 
 
-
 non_usable_keys=[]
 
 def get_trends(request):
-    start_date = "2017-02-09"
-    end_date = "2017-02-09"
-    tag = "PrimairesGauche"
+    start_date = "2017-01-18"
+    end_date = "2017-01-19"
+    tag = "PrimaireGauche"
     election_id = 6
     get_twitter_trends(request, start_date, end_date, tag, election_id)
     return HttpResponse("It worked thanks !")
 
 
-def get_twitter_trends(request, start_date=None, end_date=None, tag=None, election_id=None):
-    if start_date == None:
-        start_date = request.POST.get("start_date","")
-    if end_date == None:
-        end_date = request.POST.get("start_end","")
-    if tag == None:
-        tag = request.POST.get("tag","")
-    if election_id == None:
-        election_id = request.POST.get("election","")
+def get_twitter_trends(request, election_id, start_date, end_date, tag):
     try:
         election = Election.objects.get(id=election_id)
-    except election.DoesNotExist:
+    except Election.DoesNotExist:
         return HttpResponseNotFound("Candidate not found")
-    start = datetime.strptime(start_date, '%Y-%m-%d')
-    end = datetime.strptime(end_date, '%Y-%m-%d')
+    start = datetime.strptime(start_date, '%Y_%m_%d')
+    end = datetime.strptime(end_date, '%Y_%m_%d')
     user_token = 0
-    while start <= end:
-        save_to_database(start, tag, user_token, election)
+    while start < end:
+        save_to_database(start, tag, election)
         start += timedelta(1)
-        user_token += 1
-        if user_token > 4:
-            user_token = 0
 
 
 def replace_api_key(not_working_api_key):
@@ -185,47 +174,25 @@ def replace_api_key(not_working_api_key):
             return key
 
 
-def get_tweets_by_day(date, tag, user_token):
-    filename = os.getcwd()+ "/static/access.json"
-    with open(filename) as file:
-        token = load(file)
-
-    auth = tweepy.OAuthHandler(token[user_token]["consumer_key"], token[user_token]["consumer_secret"])
-    auth.set_access_token(token[user_token]["access_key"], token[user_token]["access_secret"])
-    api = tweepy.API(auth, wait_on_rate_limit=True)
-
+def get_tweets_by_day_from_got(date, tag):
     next_date = date + timedelta(days=1)
     day = date.strftime('%Y-%m-%d')
     next_day = next_date.strftime('%Y-%m-%d')
+    tweetCriteria = got.manager.TweetCriteria().setQuerySearch(tag).setSince(day).setUntil(next_day)
+    tweets = got.manager.TweetManager.getTweets(tweetCriteria)
+    return tweets
 
-    return tweepy.Cursor(api.search, q=tag, since_id=day, until_id=next_day).items(25)
 
-
-def filter_tweets_by_day(tweets, day, election):
+def filter_tweets_by_day_from_got(tweets, date, election):
     api_key = replace_api_key('')
     filtered_list = []
-
-    while True:
-        try:
-            tweet = tweets.next()
-            text = tweet.text
-            for candidate in election.candidates.all(): 
+    for tweet in tweets:
+        text = tweet.text
+        for candidate in election.candidates.all():
             # On parcourt l'ensemble des candidats associés à l'objet election
-                if text.find(candidate.surname) != -1:
-                    filtered_tweet = {
-                        'created_at': day,
-                        'text': text,
-                        'candidate': candidate,
-                        'score': get_score(text, api_key)
-                    }
-                    filtered_list.append(filtered_tweet)
-        except tweepy.TweepError:
-            logging.warning('rate limit raised !')
-            time.sleep(60 * 15)
-            continue
-        except StopIteration:
-            logging.warning("Stop Iteration")
-            break
+            if text.find(candidate.surname) != -1:
+                filtered_tweet = (date, text, candidate, get_score(text, api_key))
+                filtered_list.append(filtered_tweet)
     return filtered_list
 
 
@@ -244,7 +211,7 @@ def aggregate_by_day(filtered_list, day, election):
     result = {}
     final_result = []
     for tweet in filtered_list:
-        add_value(result, tweet['candidate'], tweet['score'])
+        add_value(result, tweet[2], tweet[3])
 
     place, created = Place.objects.get_or_create(country = 'France', city="Paris")
     twitter, twitter_created = TrendSource.objects.get_or_create(name="Twitter")
@@ -255,8 +222,8 @@ def aggregate_by_day(filtered_list, day, election):
             date = day,
             election_id = election.id,
             candidate_id = candidate.id,
-            score = result[candidate]['score'] / result[candidate]['weight'],
-            weight = result[candidate]['weight'],
+            score = round(result[candidate]['score'] / result[candidate]['weight'], 2),
+            weight = round(result[candidate]['weight'], 2),
             trend_source_id = twitter.id
 
         )
@@ -273,11 +240,11 @@ def add_value(dictionary, candidate, score):
         dictionary[candidate]['weight'] += 1
 
 
-def save_to_database(day, tag, user_token, election):
+def save_to_database(day, tag, election):
     """
     ::param day: datetime
     """
-    tweets = get_tweets_by_day(day, tag, user_token)
-    filtered_list = filter_tweets_by_day(tweets, day, election)
+    tweets = get_tweets_by_day_from_got(day, tag)
+    filtered_list = filter_tweets_by_day_from_got(tweets, day, election)
 
     aggregate_by_day(filtered_list, day, election)
