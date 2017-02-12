@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Election : {{ election.date }}</h2>
+    <ul>
+        <li>Id : {{ election.id }}</li>
+        <li>Date : {{ election.date }}</li>
+        <li>Candidats : 
+            <ul>
+                {% for candidate in election.candidates.all %}
+                    <li>{{ candidate.name }} {{ candidate.surname }}</li>
+                {% endfor %}
+    </ul>
+{% endblock %}

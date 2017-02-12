@@ -1,6 +1,9 @@
 from __future__ import unicode_literals
 
+from django.contrib.auth.models import User
+from django.core.validators import URLValidator
 from django.db import models
+from django.db.models import Avg, Count, Min, Max, StdDev
 from django.template.defaultfilters import truncatechars
 
 from libs.time import datetime_to_string
@@ -60,6 +63,7 @@ class Candidate(models.Model):
     birth_date = models.DateTimeField(blank=True, null=True)
     birth_place = models.ForeignKey(Place, related_name="custom_birth_place", on_delete=models.CASCADE, blank=True, null=True)
     nationality = models.ForeignKey(Place, related_name="custom_nationality", on_delete=models.CASCADE, blank=True, null=True)
+    image_url = models.TextField(validators=[URLValidator()], blank=True, null=True)
     party = models.ForeignKey(Party, on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self):
@@ -67,6 +71,14 @@ class Candidate(models.Model):
 
     def __unicode__(self):
         return self.name + " " + self.surname
+
+    @property
+    def image(self):
+        return self.image_url
+
+    @property
+    def complete_name(self):
+        return "%s %s" % (self.name, self.surname)
 
 
 class Election(models.Model):
@@ -78,6 +90,12 @@ class Election(models.Model):
         through='Result',
         through_fields=('election', 'candidate'),
     )
+
+    @property
+    def print_name(self):
+        if self.name == None:
+            return ("Election du %s" % self.date)
+        return "%s %s" % (self.name, self.date)
 
 
 class Result(models.Model):
@@ -102,8 +120,8 @@ class Trend(models.Model):
     date = models.DateTimeField(blank=True, null=True)
     election = models.ForeignKey(Election, on_delete=models.CASCADE)
     candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE)
-    score = models.DecimalField(max_digits=5,decimal_places=2)
-    weight = models.DecimalField(blank=True, null=True, max_digits=5,decimal_places=2)
+    score = models.DecimalField(max_digits=10,decimal_places=3)
+    weight = models.DecimalField(blank=True, null=True, max_digits=10,decimal_places=3)
     trend_source = models.ForeignKey(TrendSource, on_delete=models.CASCADE)
 
     def __unicode__(self):
@@ -136,7 +154,7 @@ class PoliticalFunction(models.Model):
 class Role(models.Model):
     candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE, blank=True, null=True)
     beginning_date = models.DateTimeField(blank=True, null=True)
-    end_date = models.DateTimeField(blank = True, null=True)
+    end_date = models.DateTimeField(blank=True, null=True)
     election = models.ForeignKey(Election, on_delete=models.CASCADE, blank=True, null=True)
     position_type = models.ForeignKey(PoliticalFunction, on_delete=models.CASCADE, blank=True, null=True)
 
@@ -154,8 +172,34 @@ class Role(models.Model):
                 output.append(value)
         return ", ".join(map(str, output))
 
+
 class DetailedResults(models.Model):
     place = models.ForeignKey(Place, on_delete=models.CASCADE)
     election = models.ForeignKey(Election, on_delete=models.CASCADE)
     candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE)
     vote_number = models.IntegerField(default=0)
+
+
+class Statistics(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    election = models.ForeignKey(Election, on_delete=models.CASCADE)
+    candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE)
+    score = models.DecimalField(max_digits=4 ,decimal_places=3)
+    start_date = models.DateTimeField(blank=True, null=True)
+    end_date = models.DateTimeField(blank=True, null=True)
+
+    def get_results(self):
+        twitter = TrendSource.objects.get(name="Twitter")
+        twitter_stats = Trend.objects.filter(
+            trend_source_id=twitter.id,
+            candidate_id=self.candidate.id,
+            date__gte=self.start_date,
+            date__lte=self.end_date).aggregate(average=Avg("score"), standard_deviation=StdDev("score"), min_value=Min("score"), max_value=StdDev("score"))
+        google = TrendSource.objects.get(name="Google Trends")
+        google_stats = Trend.objects.filter(
+            trend_source_id=google.id,
+            candidate_id=self.candidate.id,
+            election_id=self.election.id,
+            date__gte=self.start_date,
+            date__lte=self.end_date).aggregate(average=Avg("score"), standard_deviation=StdDev("score"), min_value=Min("score"), max_value=StdDev("score"))
+        return (twitter_stats, google_stats)

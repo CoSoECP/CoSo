@@ -61,10 +61,12 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'coso.urls'
 
+BASE_TEMPLATE = os.path.join(PROJECT_ROOT, 'templates').replace('\\','/')
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_TEMPLATE],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -145,3 +147,6 @@ STATIC_URL = '/static/'
 # Wikipedia Base API URL
 WIKIPEDIA_BASE_API_URL = "https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&rvsection=0&format=json&titles="
 
+# Data from Google Trends
+GOOGLE_USERNAME = ""
+GOOGLE_PASSWORD = ""

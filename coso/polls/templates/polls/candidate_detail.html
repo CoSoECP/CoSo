@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Candidate : {{ candidate.name }} {{ candidate.surname }}</h2>
+    <ul>
+        <li>Id : {{ candidate.id }}</li>
+        <li>Prénom : {{ candidate.name }}</li>
+        <li>Nom : {{ candidate.surname }}</li>
+        <li>Lieu de naissance : {{ candidate.birth_place }}</li>
+        <li>Date de naissance : {{ candidate.birth_date }}</li>
+    </ul>
+{% endblock %}

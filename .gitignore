@@ -87,3 +87,7 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+# Our project
+coso/polls/static/bootstrap/
+coso/polls/static/jquery/
