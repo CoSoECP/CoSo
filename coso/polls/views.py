@@ -5,6 +5,13 @@ from bs4 import BeautifulSoup
 from django.http import HttpResponse
 from django.shortcuts import render
 
+from polls.models import Election, Place, Candidate, Result, Trend, TrendSource
+
+import datetime
+
+from pytrends.request import TrendReq
+import pandas
+
 def sondage_2012(request):
     wiki = "http://www.sondages-en-france.fr/sondages/Elections/Pr%C3%A9sidentielles%202012"
     page = urllib2.urlopen(wiki)
@@ -17,6 +24,4 @@ def sondage_2012(request):
         if len(cells) == 14:
             for i in range(len(data)):
                 data[i].append(cells[i].get_text())
-
-
-    return HttpResponse("Hello, we've done the scrapping.")
+    return HttpResponse("Hello, we've done the scrapping")
