@@ -29,70 +29,6 @@ class Place(models.Model):
         return ", ".join(output)
 
 
-class Candidate(models.Model):
-    name = models.CharField(max_length=50)
-    surname = models.CharField(max_length=50)
-    birth_date = models.DateTimeField(blank=True, null=True)
-    birth_place = models.ForeignKey(Place, related_name="custom_birth_place", on_delete=models.CASCADE, blank=True, null=True)
-    nationality = models.ForeignKey(Place, related_name="custom_nationality", on_delete=models.CASCADE, blank=True, null=True)
-
-
-    def __str__(self):
-        return self.name + " " + self.surname
-
-    def __unicode__(self):
-        return self.name + " " + self.surname
-
-
-class Election(models.Model):
-    name = models.CharField(max_length=50,blank=True, null=True)
-    date = models.DateTimeField(blank=True, null=True)
-    place = models.ForeignKey(Place, on_delete=models.CASCADE)
-    candidates = models.ManyToManyField(
-        Candidate,
-        through='Result',
-        through_fields=('election', 'candidate'),
-    )
-
-
-class Result(models.Model):
-    candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE)
-    election = models.ForeignKey(Election, on_delete=models.CASCADE)
-    voting_result = models.DecimalField(max_digits=4, decimal_places=2)
-
-
-class TrendSource(models.Model):
-    name = models.CharField(max_length=50)
-    grade = models.DecimalField(blank=True, null=True, max_digits=4,decimal_places=2)
-
-    def __str__(self):
-        return self.name + " - " + ("grade : %s" % (self.grade))
-
-    def __unicode__(self):
-        return self.name + " - " + ("grade : %s" % (self.grade))
-
-
-class Trend(models.Model):
-    place = models.ForeignKey(Place, on_delete=models.CASCADE)
-    date = models.DateTimeField(blank=True, null=True)
-    election = models.ForeignKey(Election, on_delete=models.CASCADE)
-    candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE)
-    score = models.DecimalField(max_digits=4,decimal_places=2)
-    weight = models.DecimalField(blank=True, null=True, max_digits=4,decimal_places=2)
-    trend_source = models.ForeignKey(TrendSource, on_delete=models.CASCADE)
-
-
-    def __unicode__(self):
-        output = []
-        for attr, value in self.__dict__.iteritems():
-            if attr in ["date"]:
-                output.append(datetime_to_string(value))
-            elif attr in ["place", "election", "candidate", "score", "weight", "trend_source"]:
-                output.append(str(value))
-            elif attr not in ["id", "_state"] and value:
-                output.append(str(value))
-        return ", ".join(output)
-
 class Party(models.Model):
     name = models.CharField(max_length=50)
     FARLEFT = 'FL'
@@ -116,6 +52,71 @@ class Party(models.Model):
     parent = models.ForeignKey('Party', on_delete=models.CASCADE, blank = True, null = True)
     place = models.ForeignKey(Place, on_delete=models.CASCADE)
     pass
+
+
+class Candidate(models.Model):
+    name = models.CharField(max_length=50)
+    surname = models.CharField(max_length=50)
+    birth_date = models.DateTimeField(blank=True, null=True)
+    birth_place = models.ForeignKey(Place, related_name="custom_birth_place", on_delete=models.CASCADE, blank=True, null=True)
+    nationality = models.ForeignKey(Place, related_name="custom_nationality", on_delete=models.CASCADE, blank=True, null=True)
+    party = models.ForeignKey(Party, on_delete=models.CASCADE, blank=True, null=True)
+
+    def __str__(self):
+        return self.name + " " + self.surname
+
+    def __unicode__(self):
+        return self.name + " " + self.surname
+
+
+class Election(models.Model):
+    name = models.CharField(max_length=50,blank=True, null=True)
+    date = models.DateTimeField(blank=True, null=True)
+    place = models.ForeignKey(Place, on_delete=models.CASCADE)
+    candidates = models.ManyToManyField(
+        Candidate,
+        through='Result',
+        through_fields=('election', 'candidate'),
+    )
+
+
+class Result(models.Model):
+    candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE)
+    election = models.ForeignKey(Election, on_delete=models.CASCADE)
+    voting_result = models.DecimalField(max_digits=4, decimal_places=2, blank=True, null=True)
+
+
+class TrendSource(models.Model):
+    name = models.CharField(max_length=50)
+    grade = models.DecimalField(blank=True, null=True, max_digits=4,decimal_places=2)
+
+    def __str__(self):
+        return self.name + " - " + ("grade : %s" % (self.grade))
+
+    def __unicode__(self):
+        return self.name + " - " + ("grade : %s" % (self.grade))
+
+
+class Trend(models.Model):
+    place = models.ForeignKey(Place, on_delete=models.CASCADE)
+    date = models.DateTimeField(blank=True, null=True)
+    election = models.ForeignKey(Election, on_delete=models.CASCADE)
+    candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE)
+    score = models.DecimalField(max_digits=5,decimal_places=2)
+    weight = models.DecimalField(blank=True, null=True, max_digits=5,decimal_places=2)
+    trend_source = models.ForeignKey(TrendSource, on_delete=models.CASCADE)
+
+    def __unicode__(self):
+        output = []
+        for attr, value in self.__dict__.iteritems():
+            if attr in ["date"]:
+                output.append(datetime_to_string(value))
+            elif attr in ["place", "election", "candidate", "score", "weight", "trend_source"]:
+                output.append(str(value))
+            elif attr not in ["id", "_state"] and value:
+                output.append(str(value))
+        return ", ".join(output)
+
 
 
 class PoliticalFunction(models.Model):
