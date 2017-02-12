@@ -190,6 +190,7 @@ class Statistics(models.Model):
         google_stats = Trend.objects.filter(
             trend_source_id=google.id,
             candidate_id=self.candidate.id,
+            election_id=self.election.id,
             date__gte=self.start_date,
             date__lte=self.end_date).aggregate(average=Avg("score"), standard_deviation=StdDev("score"), min_value=Min("score"), max_value=StdDev("score"))
         return (twitter_stats, google_stats)
