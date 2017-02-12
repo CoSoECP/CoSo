@@ -2,6 +2,7 @@
 from coso.settings import WIKIPEDIA_BASE_API_URL, API_KEYS
 from polls.models import Candidate, Place, PoliticalFunction, Role, Trend, Election, Result, TrendSource
 from libs.time import to_datetime
+import got
 
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -177,48 +178,51 @@ def replace_api_key(not_working_api_key):
 #     candidates =[]
 
 
-def get_tweets_by_day(day, tag, user_token):
-    filename = os.getcwd()+ "/static/access.json"
-    with open(filename) as file:
-        token = load(file)
+# def get_tweets_by_day(day, tag, user_token):
+    # filename = os.getcwd()+ "/static/access.json"
+    # with open(filename) as file:
+    #     token = load(file)
 
-    auth = tweepy.OAuthHandler(token[user_token]["consumer_key"], token[user_token]["consumer_secret"])
-    auth.set_access_token(token[user_token]["access_key"], token[user_token]["access_secret"])
-    api = tweepy.API(auth, wait_on_rate_limit=True)
+    # auth = tweepy.OAuthHandler(token[user_token]["consumer_key"], token[user_token]["consumer_secret"])
+    # auth.set_access_token(token[user_token]["access_key"], token[user_token]["access_secret"])
+    # api = tweepy.API(auth, wait_on_rate_limit=True)
+def get_tweets_by_day(date, tag):
 
-    date = datetime.strptime(day, '%Y-%m-%d')
     next_date = date + timedelta(days=1)
+    day = date.strftime('%Y-%m-%d')
     next_day = next_date.strftime('%Y-%m-%d')
+    tweetCriteria = got.manager.TweetCriteria().setQuerySearch(tag).setSince(day).setUntil(next_day)
+    tweets = got.manager.TweetManager.getTweets(tweetCriteria)
+    return tweets
+    # return tweepy.Cursor(api.search, q=tag, since=day, until=next_day).items(25)
 
-    return tweepy.Cursor(api.search, q=tag, since=day,
-                         until=next_day).items(25)
 
-
-def filter_tweets_by_day(tweets, day, election):
+def filter_tweets_by_day(tweets, date, election):
     api_key = replace_api_key('')
     filtered_list = []
 
-    while True:
-        try:
-            tweet = tweets.next()
+    # while True:
+    #     try:
+    for tweet in tweets:
+            # tweet = tweets.next()
             text = tweet.text
-            print(tweet.created_at)
+            print(tweet.date)
             for candidate in election.candidates.all(): 
             # On parcourt l'ensemble des candidats associés à l'objet election
                 if text.find(candidate.surname) != -1:
                     filtered_tweet = {
-                        'created_at': day,
+                        'created_at': date,
                         'text': text,
                         'candidate': candidate,
                         'score': get_score(text, api_key)
                     }
                     filtered_list.append(filtered_tweet)
-        except tweepy.TweepError:
-            print('rate limit raised !')
-            time.sleep(60 * 15)
-            continue
-        except StopIteration:
-            break
+        # except tweepy.TweepError:
+        #     print('rate limit raised !')
+        #     time.sleep(60 * 15)
+        #     continue
+        # except StopIteration:
+        #     break
 
     return filtered_list
 
