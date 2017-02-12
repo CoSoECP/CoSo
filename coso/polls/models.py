@@ -63,11 +63,8 @@ class Candidate(models.Model):
     birth_date = models.DateTimeField(blank=True, null=True)
     birth_place = models.ForeignKey(Place, related_name="custom_birth_place", on_delete=models.CASCADE, blank=True, null=True)
     nationality = models.ForeignKey(Place, related_name="custom_nationality", on_delete=models.CASCADE, blank=True, null=True)
-<<<<<<< HEAD
     image_url = models.TextField(validators=[URLValidator()], blank=True, null=True)
-=======
     party = models.ForeignKey(Party, on_delete=models.CASCADE, blank=True, null=True)
->>>>>>> master
 
     def __str__(self):
         return self.name + " " + self.surname
