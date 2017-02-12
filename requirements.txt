@@ -7,3 +7,11 @@ requests==2.12.3
 requests-oauthlib==0.7.0
 six==1.10.0
 tweepy==3.5.0
+repustate==1.2.2
+lxml==3.5.0
+pyquery==1.2.10
+numpy==1.12.0
+pandas==0.19.2
+python-dateutil==2.6.0
+pytrends==4.0.0
+pytz==2016.10
