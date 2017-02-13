@@ -408,8 +408,8 @@ def analysis_from_google(request, election_id):
         request_content.append(date_format)
         my_data = import_trends(request_content)
         for daily_date in my_data.index:
+            total = 0
             for candidate in candidats[:5]:
-                total = 0
                 candidate_name =  candidate.surname + " " + candidate.name
                 if (isinstance(my_data.loc[daily_date, candidate_name.lower()], (int, float, long))):
                     candidate_weight = round(float(my_data.loc[daily_date, candidate_name.lower()]),2)
