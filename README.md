@@ -156,3 +156,19 @@ How to run tests ? Use the following command
 
 This command will create the test database and run all the tests.
 Doc : https://docs.djangoproject.com/en/1.10/intro/tutorial05/
+
+## 6. Front-end
+
+The front-end website has been developped in the polls app. 
+
+In order to install the front-end dependencies (Bootstrap), the user must use
+bower.
+
+Bower is a command line utility. Install it with npm :
+
+`$ npm install -g bower`
+You can find more information here : https://bower.io/
+
+Once bower is installed, install the FE dependencies with :
+`# installs the project dependencies listed in bower.json`
+`$ bower install`
