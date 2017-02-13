@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from django.contrib.auth.models import User
 from django.core.validators import URLValidator
 from django.db import models
-from django.db.models import Avg, Count, Min, Max, StdDev
+from django.db.models import Avg, Count, Min, Max, StdDev, Sum
 from django.template.defaultfilters import truncatechars
 
 from libs.time import datetime_to_string
@@ -190,11 +190,15 @@ class Statistics(models.Model):
 
     def get_results(self):
         twitter = TrendSource.objects.get(name="Twitter")
+        twitter_weight_sum = Trend.objects.filter(
+            trend_source_id=twitter.id,
+            date__gte=self.start_date,
+            date__lte=self.end_date).aggregate(weight_sum=Sum("weight"))
         twitter_stats = Trend.objects.filter(
             trend_source_id=twitter.id,
             candidate_id=self.candidate.id,
             date__gte=self.start_date,
-            date__lte=self.end_date).aggregate(average=Avg("score"), standard_deviation=StdDev("score"), min_value=Min("score"), max_value=StdDev("score"))
+            date__lte=self.end_date).aggregate(average=Avg("score"), weight_sum=Sum("weight"), standard_deviation=StdDev("score"), min_value=Min("score"), max_value=StdDev("score"))
         google = TrendSource.objects.get(name="Google Trends")
         google_stats = Trend.objects.filter(
             trend_source_id=google.id,
@@ -202,4 +206,4 @@ class Statistics(models.Model):
             election_id=self.election.id,
             date__gte=self.start_date,
             date__lte=self.end_date).aggregate(average=Avg("score"), standard_deviation=StdDev("score"), min_value=Min("score"), max_value=StdDev("score"))
-        return (twitter_stats, google_stats)
+        return [twitter_weight_sum, twitter_stats, google_stats]

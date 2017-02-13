@@ -111,7 +111,14 @@ class StatisticsView(ListView):
             return HttpResponseNotFound("Candidate not found")
         statistic = Statistics(user=user, election=election, candidate=candidate, score=0, start_date=start_date, end_date=end_date)
         results = statistic.get_results()
-        statistic.score = (results[0]["average"] + -1 + 2 * results[1]["average"])/2
+        statistic.score = self.get_score(results)
         statistic.save()
         previous_statistics = Statistics.objects.reverse()
-        return render(request, 'polls/statistics.html', {'previous_statistics':previous_statistics, 'statistic': statistic, 'results':results})
+        return render(request, 'polls/statistics.html', {'previous_statistics':previous_statistics, 'statistic': statistic, 'results':results[1:]})
+
+    def get_score(self, results):
+        twitter_weight_sum = float(results[0]["weight_sum"] or 1)
+        twitter_candidate_weight_sum = float(results[1]["weight_sum"] or 1)
+        twitter_average = results[1]["average"] or 0
+        google_average = results[2]["average"] or 0
+        return (1 + 0.2*twitter_average)*(google_average + twitter_candidate_weight_sum/twitter_weight_sum)/2

@@ -10,7 +10,7 @@
         <ul>
             {% load static %}
             {% for candidate in object_list %}
-                <div class="col-sm-4 col-md-4">
+                <div class="col-sm-4 col-md-3">
                     <div class="thumbnail">
                       {% if candidate.image == None %}
                         <img src="{% static 'images/bird.png' %}" alt="...">
@@ -20,7 +20,7 @@
                       <div class="caption">
                         <h3>{{ candidate.name }} {{ candidate.surname }}</h3>
                         <p>Né le {{ candidate.birth_date }}</p>
-                        <p><a href="#" class="btn btn-primary" role="button">Sélectionner</a></p>
+                        <!--p><a href="#" class="btn btn-primary" role="button">Sélectionner</a></p-->
                       </div>
                     </div>
                   </div>

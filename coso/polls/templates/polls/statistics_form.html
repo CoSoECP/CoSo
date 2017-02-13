@@ -12,7 +12,10 @@ candidates = JSON.parse(candidates);
 var candidates_by_elections = {{ candidates_by_election }};
 
 function changeElection(value) {
-    //var value = document.getElementById("election_id").value;
+    $('#candidateId')
+            .find('option')
+            .remove()
+            .end()
     if (candidates_by_elections[value].length > 0){
         for(i = 0; i < candidates_by_elections[value].length; i++){
             var newSelect = document.getElementById("candidateId");
@@ -22,11 +25,6 @@ function changeElection(value) {
             // then append it to the select element
             newSelect.appendChild(opt);
         }
-    } else {
-        $('#candidateId')
-            .find('option')
-            .remove()
-            .end()
     }
 };
 
@@ -48,7 +46,7 @@ function changeElection(value) {
                 <select class="form-control" name="electionId" id="electionId" onchange="changeElection(value);">
                   <option value="" selected> </option>
                   {% for election in elections %}
-                    <option value="{{ election.id }}">{{ election.date|date:"d/m/Y" }}</option>
+                    <option value="{{ election.id }}">{{ election.print_name }}</option>
                   {% endfor %}
                 </select>
               </div>
